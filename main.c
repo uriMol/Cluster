@@ -18,6 +18,7 @@ int main(int argc, char* argv[]){
 	spmat *sp;
 	FILE *inputFile, *outputFile;
 	int vartices, rank, *neighbors;
+	double *eigenVec;
 
 	inputFile = fopen(argv[1]);
 	/* assert open success */
@@ -25,7 +26,7 @@ int main(int argc, char* argv[]){
 	/* allocating the array, setting it up with all values */
 	sp = spmat_setting(inputFile);
 
-	/* continue to create B matrix */
+	eigenVec = getEigenVec(sp);
 
 
 

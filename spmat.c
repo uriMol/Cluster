@@ -8,24 +8,14 @@
 #include <stdio.h>
 #include <assert.h>
 #include <stdlib.h>
+#include <math.h>
 
 /* declaring all future functions */
 void arr_add_row(struct _spmat* , const double*, int);
 void arr_free(spmat*);
 void arr_mult(const spmat*, const double*, double*);
 
-/* Array Implementation */
-typedef struct array_helper{
-	/*
-	 * values - keeping the non-zero values of the matrix
-	 * colind - keeping the column indices of the non-zero's values
-	 * rowptr - keeping for each row where its first non-zero value is from the values array
-	 */
-	double *values;
-	int *colind;
-	int *rowptr;
-	int *ranks;
-}array_helper;
+
 
 spmat* spmat_setting(FILE *inputFile){
 	int k, i, tmpRank, vertices, ranks, junk, *tmpRow;
@@ -62,7 +52,7 @@ spmat* spmat_setting(FILE *inputFile){
 		sp->add_row(sp, tmpRow, i, tmpRank);
 	}
 	free(tmpRow);
-
+	sp->shift = getShift(sp);
 
 	return sp;
 }
@@ -127,6 +117,33 @@ spmat* spmat_allocate_array(int n, int nnz){
 	arr_help->ranks = (int*) malloc(n * sizeof(int));
 	CHECK(arr_help->ranks, NULL, "Allocating");
 	return sp;
+}
+
+int getShift(spmat *sp){
+	int i, j, rows, ranks, tmpRank, *rnkPtr, *colPtr, connected;
+	double tmp, max;
+
+	rows = sp->n;
+	ranks = sp->M;
+	colPtr = sp->private->colind;
+	max = 0;
+	for(i = 0; i < rows; i++){
+		tmp = 0;
+		rnkPtr = sp->private->ranks;
+		tmpRank = rnkPtr[i];
+		for(j = 0; j < tmpRank; j++){
+			if (*colPtr == j){
+				connected = 1;
+				colPtr++;
+			} else{
+				connected = 0;
+			}
+			tmp += fabs(connected - ((tmpRank)*(*rnkPtr))/(double)ranks);
+			rnkPtr++;
+		}
+		if (tmp >= max) max = tmp;
+	}
+	return max;
 }
 
 
