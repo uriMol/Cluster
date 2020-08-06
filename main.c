@@ -12,6 +12,7 @@
 #include <time.h>
 #include <math.h>
 #include "spmat.h"
+#include "spmatUtils.h"
 #include <string.h>
 
 int main(int argc, char* argv[]){
@@ -25,6 +26,10 @@ int main(int argc, char* argv[]){
 
 	/* allocating the array, setting it up with all values */
 	sp = spmat_setting(inputFile);
+	if(sp->M == 0){
+		return -1;
+		/*TODO special case*/
+	}
 
 	eigenVec = getEigenVec(sp);
 
