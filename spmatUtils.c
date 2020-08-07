@@ -12,12 +12,27 @@
 #include <math.h>
 #define epsilon 0.0001
 
+
 double* getRandVec(int n);
 void getAVmult(const double *eigenVec, const spmat *sp, double* result);
 void getRanksMult(double *eigenVec, spmat *sp, double *result);
 void getShiftMult(double *eigenVec, spmat *sp, double *result);
 void sumAll(double *aVec, double *bVec, double *cVec, double *result, int n);
+void normalize(double *vec, int n);
+double vecDot(double *aVec, double *bVec, int n);
 int updateEigen(double *VBk, double *eigenVec, int n);
+
+
+double* getRandVec(int n){
+	int i;
+	double *v;
+	srand(time(NULL));
+	v = (double*)malloc(n*sizeof(double));
+	for (i = 0; i < n; i++){
+		v[i] = rand();
+	}
+	return v;
+}
 
 double* getEigenVec(spmat *sp){
 	int n, smallDif;
@@ -41,6 +56,7 @@ double* getEigenVec(spmat *sp){
 		getRanksMult(eigenVec, sp, bVec);
 		getShiftMult(eigenVec, sp, cVec);
 		sumAll(aVec, bVec, cVec, VBk, n);
+		normalize(VBk, n);
 		smallDif = updateEigen(VBk, eigenVec, n);
 	}
 	free(aVec);
@@ -76,26 +92,24 @@ void getAVmult(const double *v, const spmat *A, double *result){
 }
 
 void getRanksMult(double *eigenVec, spmat *sp, double *result){
-	int n, i, j, *fastRnk, *slowRnk, tmpRnk;
-	double *resPtr, sum, m, *eigPtr;
+	int n, i, j, *rnkPtr;
+	double *resPtr, m, *eigPtr, rnkConst;
 
 	m = sp->M;
 	n = sp->n;
-	slowRnk = sp->ranks;
+	rnkPtr = sp->ranks;
+	eigPtr = eigenVec;
+	for(j = 0; j < n; j++){
+		rnkConst += (*rnkPtr)*(*eigPtr)/m;
+		eigPtr++;
+		rnkPtr++;
+	}
+	rnkPtr = sp->ranks;
 	resPtr = result;
 	for(i = 0; i < n; i++){
-		tmpRnk = *slowRnk;
-		eigPtr = eigenVec;
-		sum = 0;
-		fastRnk = sp->ranks;
-		for(j = 0; j < n; j++){
-			sum += (tmpRnk * (*fastRnk)*(*eigPtr))/m;
-			eigPtr++;
-			fastRnk++;
-		}
-		*resPtr = sum;
+		*resPtr = (*rnkPtr) * rnkConst;
 		resPtr++;
-		slowRnk++;
+		rnkPtr++;
 	}
 }
 
@@ -122,6 +136,28 @@ void sumAll(double *aVec, double *bVec, double *cVec, double *result, int n){
 	res = result;
 	for(i = 0; i < n; i++){
 		*res = *aPtr - *bPtr + *cPtr;
+		res++;
+		aPtr++;
+		bPtr++;
+		cPtr++;
+	}
+}
+
+void normalize(double *vec, int n){
+	int i;
+	double sum, *vecPtr;
+
+	sum = 0;
+	vecPtr = vec;
+	for(i = 0; i < n; i++){
+			sum += (*vecPtr)*(*vecPtr);
+			vecPtr++;
+	}
+	vecPtr = vec;
+	sum = sqrt(sum);
+	for (i = 0; i < n; i++){
+		*vecPtr /= sum;
+		vecPtr++;
 	}
 }
 
@@ -140,16 +176,94 @@ int updateEigen(double *VBk, double *eigenVec, int n){
 	return cnt;
 }
 
-double* getRandVec(int n){
-	int i;
-	double *v;
-	srand(time(NULL));
-	v = (double*)malloc(n*sizeof(double));
-	for (i = 0; i < n; i++){
-		v[i] = rand();
-	}
-	return v;
+double getEigenVal(double *eigenVec, spmat *sp){
+	int n;
+	double *aVec, *bVec, *cVec, *BVk, res;
+
+	n = sp->n;
+
+	BVk = (double*)malloc(n*sizeof(double));
+	CHECKNEQ(BVk, NULL, "malloc VBk");
+	aVec = (double*)malloc(n*sizeof(double));
+	CHECKNEQ(aVec, NULL, "malloc aVec");
+	bVec = (double*)malloc(n*sizeof(double));
+	CHECKNEQ(bVec, NULL, "malloc bVec");
+	cVec = (double*)malloc(n*sizeof(double));
+	CHECKNEQ(cVec, NULL, "malloc cVec");
+	getAVmult(eigenVec, sp, aVec);
+	getRanksMult(eigenVec, sp, bVec);
+	getShiftMult(eigenVec, sp, cVec);
+	sumAll(aVec, bVec, cVec, BVk, n);
+
+	res = ((vecDot(eigenVec, BVk, n) / vecDot(eigenVec, eigenVec, n)) - sp->shift);
+
+	free(aVec);
+	free(bVec);
+	free(cVec);
+	free(BVk);
+	return res;
+
 }
+
+double vecDot(double *aVec, double *bVec, int n){
+	int i;
+	double sum, *aPtr, *bPtr;
+
+	sum = 0;
+	aPtr = aVec;
+	bPtr = bVec;
+	for (i = 0; i < n; i++){
+		sum += (*aPtr) * (*bPtr);
+		aPtr++;
+		bPtr++;
+	}
+	return sum;
+}
+
+
+
+double* divByEigen(double* eigenVec, int n){
+	int i;
+	double *division, *divPtr, *eigPtr;
+
+	division = (double*)malloc(n*sizeof(double));
+	divPtr = division;
+	eigPtr = eigenVec;
+	for (i = 0; i < n; i++){
+		(IS_POSITIVE(*eigPtr)) ? (*divPtr = 1) : (*divPtr = -1);
+		divPtr++;
+		eigPtr++;
+	}
+	return division;
+}
+
+double getModularity(spmat *sp, double *division){
+	int n;
+	double *Bs, *aVec, *bVec, *cVec, res;
+
+	n = sp->n;
+	Bs = (double*)malloc(n*sizeof(double));
+	CHECKNEQ(Bs, NULL, "malloc Bs");
+	aVec = (double*)malloc(n*sizeof(double));
+	CHECKNEQ(aVec, NULL, "malloc aVec");
+	bVec = (double*)malloc(n*sizeof(double));
+	CHECKNEQ(bVec, NULL, "malloc bVec");
+	cVec = (double*)calloc(n, sizeof(double));
+	CHECKNEQ(cVec, NULL, "malloc cVec");
+	getAVmult(division, sp, aVec);
+	getRanksMult(division, sp, bVec);
+	sumAll(aVec, bVec, cVec, Bs, n);
+
+	res = vecDot(division, Bs, n);
+
+	free(aVec);
+	free(bVec);
+	free(cVec);
+	free(Bs);
+	return res;
+}
+
+
 
 
 

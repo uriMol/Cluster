@@ -17,11 +17,11 @@
 
 int main(int argc, char* argv[]){
 	spmat *sp;
-	FILE *inputFile, *outputFile;
-	int vartices, rank, *neighbors;
-	double *eigenVec;
+	FILE *inputFile;
+	double *eigenVec, eigenVal, *division, Q;
 
-	inputFile = fopen(argv[1]);
+
+	inputFile = fopen(argv[1], "r");
 	/* assert open success */
 
 	/* allocating the array, setting it up with all values */
@@ -33,8 +33,23 @@ int main(int argc, char* argv[]){
 
 	eigenVec = getEigenVec(sp);
 
+	eigenVal = getEigenVal(eigenVec, sp);
 
+	if (!IS_POSITIVE(eigenVal)){
+		return -1;
+		/*TODO special case - return undividable*/
+	}
 
+	division = divByEigen(eigenVec, sp->n);
 
+	Q = getModularity(sp, division);
+
+	if (!IS_POSITIVE(Q)){
+		return -1;
+		/*TODO special case - return undividable*/
+	}
+
+	/*TODO return s - the division*/
+	CHECKEQ (argc, argc, "argc");
 	return 0;
 }
