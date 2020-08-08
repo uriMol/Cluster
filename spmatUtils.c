@@ -27,10 +27,15 @@ double* getRandVec(int n){
 	int i;
 	double *v;
 	srand(time(NULL));
+
+	printf("\nIn:getRandVec. starting to create random vector");
+
 	v = (double*)malloc(n*sizeof(double));
 	for (i = 0; i < n; i++){
 		v[i] = rand();
 	}
+
+	printf("\nIn:getRandVec. finish creating the random vector");
 	return v;
 }
 
@@ -38,10 +43,17 @@ double* getEigenVec(spmat *sp){
 	int n, smallDif;
 	double *eigenVec, *VBk, *aVec, *bVec, *cVec;
 
+	printf("\nIn:getEigenVec. starting the method");
 
 	n = sp->n;
 	/*Initializing with random values*/
+
+	printf("\nIn:getEigenVec. calling getRandVec");
+
 	eigenVec = getRandVec(n);
+
+	printf("\nIn:getEigenVec. revieced a random vec");
+
 	VBk = (double*)malloc(n*sizeof(double));
 	CHECKNEQ(VBk, NULL, "malloc VBk");
 	aVec = (double*)malloc(n*sizeof(double));
@@ -51,6 +63,8 @@ double* getEigenVec(spmat *sp){
 	cVec = (double*)malloc(n*sizeof(double));
 	CHECKNEQ(cVec, NULL, "malloc cVec");
 
+	printf("\nIn:getEigenVec. starting power iterations");
+
 	while(smallDif != n){
 		getAVmult(eigenVec, sp, aVec);
 		getRanksMult(eigenVec, sp, bVec);
@@ -59,6 +73,9 @@ double* getEigenVec(spmat *sp){
 		normalize(VBk, n);
 		smallDif = updateEigen(VBk, eigenVec, n);
 	}
+
+	printf("\nIn:getEigenVec. finish with power iteration");
+
 	free(aVec);
 	free(bVec);
 	free(cVec);
@@ -180,6 +197,8 @@ double getEigenVal(double *eigenVec, spmat *sp){
 	int n;
 	double *aVec, *bVec, *cVec, *BVk, res;
 
+	printf("\nIn:getEigenVal. starting the method");
+
 	n = sp->n;
 
 	BVk = (double*)malloc(n*sizeof(double));
@@ -190,12 +209,17 @@ double getEigenVal(double *eigenVec, spmat *sp){
 	CHECKNEQ(bVec, NULL, "malloc bVec");
 	cVec = (double*)malloc(n*sizeof(double));
 	CHECKNEQ(cVec, NULL, "malloc cVec");
+
+	printf("\nIn:getEigenVal. calling all mult functions and sumAll");
+
 	getAVmult(eigenVec, sp, aVec);
 	getRanksMult(eigenVec, sp, bVec);
 	getShiftMult(eigenVec, sp, cVec);
 	sumAll(aVec, bVec, cVec, BVk, n);
 
 	res = ((vecDot(eigenVec, BVk, n) / vecDot(eigenVec, eigenVec, n)) - sp->shift);
+
+	printf("\nIn:getEigenVal. finish running, eigenVal is: %f", res);
 
 	free(aVec);
 	free(bVec);
@@ -226,6 +250,8 @@ double* divByEigen(double* eigenVec, int n){
 	int i;
 	double *division, *divPtr, *eigPtr;
 
+	printf("\nIn:divByEigen. starting the method");
+
 	division = (double*)malloc(n*sizeof(double));
 	divPtr = division;
 	eigPtr = eigenVec;
@@ -234,12 +260,17 @@ double* divByEigen(double* eigenVec, int n){
 		divPtr++;
 		eigPtr++;
 	}
+
+	printf("\nIn:divByEigen. finished division of the graph");
+
 	return division;
 }
 
 double getModularity(spmat *sp, double *division){
 	int n;
 	double *Bs, *aVec, *bVec, *cVec, res;
+
+	printf("\nIn:getModularity, starting the method");
 
 	n = sp->n;
 	Bs = (double*)malloc(n*sizeof(double));
@@ -255,6 +286,8 @@ double getModularity(spmat *sp, double *division){
 	sumAll(aVec, bVec, cVec, Bs, n);
 
 	res = vecDot(division, Bs, n);
+
+	printf("\nIn:getModularity. finished running, modularity is: %f", res);
 
 	free(aVec);
 	free(bVec);

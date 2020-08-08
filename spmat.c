@@ -20,6 +20,8 @@ spmat* spmat_setting(FILE *inputFile){
 	int k, i, tmpRank, vertices, ranks, junk, *tmpRow;
 	spmat *sp;
 
+	printf("\nIn: spmat_setting. Starting spmat_setting");
+
 	k = fread(&vertices, sizeof(int), 1, inputFile);
 	CHECKEQ(k, 1, "Reading File");
 
@@ -35,7 +37,12 @@ spmat* spmat_setting(FILE *inputFile){
 	}
 
 	/*Allocating the matrix */
+
+	printf("\nIn: spmat_setting. Calling spmat_allocate_array");
+
 	sp = spmat_allocate_array(vertices, ranks);
+
+	printf("\nIn: spmat_swtting. Finish allocating array");
 
 	/*now we read the matrix into spmat */
 	rewind(inputFile);
@@ -43,6 +50,9 @@ spmat* spmat_setting(FILE *inputFile){
 	CHECKEQ(k, 1, "Reading File");
 	tmpRow = (int*) malloc(vertices * sizeof(int));
 	CHECKNEQ(tmpRow, NULL, "Allocating");
+
+	printf("\nIn: spmat_setting. Adding all rows using add_row");
+
 	for (i = 0; i < vertices; i++){
 		k = fread(&tmpRank, sizeof(int) , 1, inputFile);
 		CHECKEQ(k, 1, "Reading File");
@@ -50,8 +60,16 @@ spmat* spmat_setting(FILE *inputFile){
 		CHECKEQ(k, tmpRank, "Reading File");
 		add_row(sp, tmpRow, i, tmpRank);
 	}
+
+	printf("\nIn: spmat_setting. Finish adding all rows");
+
 	free(tmpRow);
+
+	printf("\nIn:spmat_seeting. Calling getShift");
+
 	sp->shift = getShift(sp);
+
+	printf("\nIn: spmat_setting. Finish getShift, finish spmat_setting");
 
 	return sp;
 }
@@ -62,6 +80,7 @@ void add_row(spmat *A, const int *row, int i, int rank){
 	int const *index;
 	double *valueIndex;
 
+	printf("\nIn:add_row. adding row number %d", i);
 
 	/*initalizing all variables */
 	j = 0;
@@ -86,10 +105,15 @@ void add_row(spmat *A, const int *row, int i, int rank){
 
 	A->ranks[i] = rank;
 	A->rowptr[i+1] = (A->rowptr[i] + rank);
+
+	printf("\nIn:add_row. finish adding row number %d",i);
 }
 
 spmat* spmat_allocate_array(int n, int nnz){
 	spmat *sp;
+
+	printf("\nIn:spmat_allocate_array. starting allocation");
+
 	sp = (spmat*) malloc(sizeof(spmat));
 	CHECKNEQ(sp, NULL, "Allocating");
 
@@ -105,12 +129,17 @@ spmat* spmat_allocate_array(int n, int nnz){
 	CHECKNEQ(sp->rowptr, NULL, "Allocating");
 	sp->ranks = (int*) malloc(n * sizeof(int));
 	CHECKNEQ(sp->ranks, NULL, "Allocating");
+
+	printf("\nIn: spmat_allocate_array. finish allocating");
+
 	return sp;
 }
 
 int getShift(spmat *sp){
 	int i, j, rows, ranks, tmpRank, *rnkPtr, *colPtr, connected;
 	double tmp, max;
+
+	printf("\nIn:getShift. start the method");
 
 	rows = sp->n;
 	ranks = sp->M;
@@ -132,6 +161,8 @@ int getShift(spmat *sp){
 		}
 		if (tmp >= max) max = tmp;
 	}
+
+	printf("\nIn:getShift. finish method. the shift is: %f", max);
 	return max;
 }
 
