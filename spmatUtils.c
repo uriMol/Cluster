@@ -110,11 +110,12 @@ void getAVmult(const double *v, const spmat *A, double *result){
 }
 
 void getRanksMult(double *eigenVec, spmat *sp, double *result){
-	int n, i, j, *slowRnk, *fastRnk;
-	double *resPtr, *eigPtr, m, sum;
+	int n, i, j, *rnkPtr;
+	double *resPtr, *eigPtr, m, rnkConst;
 
 	m = sp->M;
 	n = sp->n;
+	/*
 	resPtr = result;
 	slowRnk= sp->ranks;
 	for(i = 0; i < n; i++){
@@ -130,8 +131,7 @@ void getRanksMult(double *eigenVec, spmat *sp, double *result){
 		resPtr++;
 		slowRnk++;
 	}
-
-	/*
+	*/
 	rnkPtr = sp->ranks;
 	eigPtr = eigenVec;
 	for(j = 0; j < n; j++){
@@ -145,7 +145,7 @@ void getRanksMult(double *eigenVec, spmat *sp, double *result){
 		*resPtr = (*rnkPtr) * rnkConst;
 		resPtr++;
 		rnkPtr++;
-	}*/
+
 }
 
 

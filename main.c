@@ -21,7 +21,7 @@ int main(int argc, char* argv[]){
 	FILE *inputFile;
 	double *eigenVec, eigenVal, *division, Q;
 
-	SP_BUFF_SET();
+	/*SP_BUFF_SET();*/
 
 	printf("\nIn: main. Starting main");
 
