@@ -145,6 +145,7 @@ void getRanksMult(double *eigenVec, spmat *sp, double *result){
 		*resPtr = (*rnkPtr) * rnkConst;
 		resPtr++;
 		rnkPtr++;
+	}
 
 }
 
