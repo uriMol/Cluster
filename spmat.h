@@ -8,8 +8,8 @@
 #include <stdio.h>
 #ifndef _SPMAT_H
 #define _SPMAT_H
-#define CHECKEQ(k, expected , msg) if (k != expected) printf("ERROR - %s " , msg); exit(1)
-#define CHECKNEQ(k, expected , msg) if (k == expected) printf("ERROR - %s " , msg); exit(1)
+#define CHECKEQ(k, expected , msg) if (k != expected) printf("ERROR - %s " , msg)
+#define CHECKNEQ(k, expected , msg) if (k == expected) printf("ERROR - %s " , msg)
 
 
 typedef struct _spmat {
@@ -27,7 +27,7 @@ typedef struct _spmat {
 	/* 2 * edges OR sum of all ranks */
 	int		M;
 	/*The value of '1' norm of the B matrix of this mat*/
-	int 	shift;
+	double 	shift;
 
 } spmat;
 
@@ -38,7 +38,7 @@ spmat* spmat_setting(FILE *inputFile);
 spmat* spmat_allocate_array(int n, int nnz);
 
 /* Getting the value C that we needs to shift */
-int getShift(spmat *sp);
+double getShift(spmat *sp);
 
 #endif
 

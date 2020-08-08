@@ -17,13 +17,15 @@ void arr_free(spmat*);
 
 
 spmat* spmat_setting(FILE *inputFile){
-	int k, i, tmpRank, vertices, ranks, junk, *tmpRow;
+	int k, i, tmpRank, vertices, ranks, *junk, *tmpRow;
 	spmat *sp;
 
 	printf("\nIn: spmat_setting. Starting spmat_setting");
 
 	k = fread(&vertices, sizeof(int), 1, inputFile);
 	CHECKEQ(k, 1, "Reading File");
+
+	junk = (int*)malloc(sizeof(int) * vertices);
 
 	/* checking sum of ranks*/
 	ranks = 0;
@@ -32,9 +34,10 @@ spmat* spmat_setting(FILE *inputFile){
 		k = fread(&tmpRank, sizeof(int), 1, inputFile);
 		CHECKEQ(k, 1, "Reading File");
 		ranks += tmpRank;
-		k = fread(&junk, sizeof(int), tmpRank, inputFile);
+		k = fread(junk, sizeof(int), tmpRank, inputFile);
 		CHECKEQ(k, tmpRank, "Reading File");
 	}
+
 
 	/*Allocating the matrix */
 
@@ -46,7 +49,7 @@ spmat* spmat_setting(FILE *inputFile){
 
 	/*now we read the matrix into spmat */
 	rewind(inputFile);
-	k = fread(&junk, sizeof(int) , 1, inputFile);
+	k = fread(junk, sizeof(int) , 1, inputFile);
 	CHECKEQ(k, 1, "Reading File");
 	tmpRow = (int*) malloc(vertices * sizeof(int));
 	CHECKNEQ(tmpRow, NULL, "Allocating");
@@ -64,6 +67,8 @@ spmat* spmat_setting(FILE *inputFile){
 	printf("\nIn: spmat_setting. Finish adding all rows");
 
 	free(tmpRow);
+	free(junk);
+
 
 	printf("\nIn:spmat_seeting. Calling getShift");
 
@@ -135,9 +140,9 @@ spmat* spmat_allocate_array(int n, int nnz){
 	return sp;
 }
 
-int getShift(spmat *sp){
+double getShift(spmat *sp){
 	int i, j, rows, ranks, tmpRank, *rnkPtr, *colPtr, connected;
-	double tmp, max;
+	double tmp, max, result;
 
 	printf("\nIn:getShift. start the method");
 
@@ -149,14 +154,15 @@ int getShift(spmat *sp){
 		tmp = 0;
 		rnkPtr = sp->ranks;
 		tmpRank = rnkPtr[i];
-		for(j = 0; j < tmpRank; j++){
+		for(j = 0; j < rows; j++){
 			if (*colPtr == j){
 				connected = 1;
 				colPtr++;
 			} else{
 				connected = 0;
 			}
-			tmp += fabs(connected - ((tmpRank)*(*rnkPtr))/(double)ranks);
+			result = fabs(connected - ((tmpRank)*(*rnkPtr))/(double)ranks);
+			tmp += result;
 			rnkPtr++;
 		}
 		if (tmp >= max) max = tmp;

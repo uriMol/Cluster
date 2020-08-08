@@ -14,11 +14,14 @@
 #include "spmat.h"
 #include "spmatUtils.h"
 #include <string.h>
+#include "SPBufferset.h"
 
 int main(int argc, char* argv[]){
 	spmat *sp;
 	FILE *inputFile;
 	double *eigenVec, eigenVal, *division, Q;
+
+	SP_BUFF_SET();
 
 	printf("\nIn: main. Starting main");
 

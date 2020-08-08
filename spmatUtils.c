@@ -86,12 +86,13 @@ double* getEigenVec(spmat *sp){
 void getAVmult(const double *v, const spmat *A, double *result){
 	/*initializing */
 	int i, j, *colIndex, *rowPointer;
-	double *value, tmp_result;
+	double *value, tmp_result, *resPtr;
 
 	/*setting the variables*/
 	value = A->values;
 	colIndex = A->colind;
 	rowPointer = A->rowptr;
+	resPtr = result;
 
 
 	/*looping and multiplying*/
@@ -103,17 +104,34 @@ void getAVmult(const double *v, const spmat *A, double *result){
 			colIndex++;
 		}
 		rowPointer++;
-		*result = tmp_result;
-		result++;
+		*resPtr = tmp_result;
+		resPtr++;
 	}
 }
 
 void getRanksMult(double *eigenVec, spmat *sp, double *result){
-	int n, i, j, *rnkPtr;
-	double *resPtr, m, *eigPtr, rnkConst;
+	int n, i, j, *slowRnk, *fastRnk;
+	double *resPtr, *eigPtr, m, sum;
 
 	m = sp->M;
 	n = sp->n;
+	resPtr = result;
+	slowRnk= sp->ranks;
+	for(i = 0; i < n; i++){
+		sum = 0;
+		fastRnk= sp->ranks;
+		eigPtr = eigenVec;
+		for(j = 0; j < n; j++){
+			sum += (double)((*slowRnk) * (*fastRnk))*(*eigPtr)/m;
+			fastRnk++;
+			eigPtr++;
+		}
+		*resPtr = sum;
+		resPtr++;
+		slowRnk++;
+	}
+
+	/*
 	rnkPtr = sp->ranks;
 	eigPtr = eigenVec;
 	for(j = 0; j < n; j++){
@@ -127,20 +145,20 @@ void getRanksMult(double *eigenVec, spmat *sp, double *result){
 		*resPtr = (*rnkPtr) * rnkConst;
 		resPtr++;
 		rnkPtr++;
-	}
+	}*/
 }
 
 
 void getShiftMult(double *eigenVec, spmat *sp, double *result){
 	int n, i;
-		double c, *vecPtr, *eigenPtr;
+		double c, *resPtr, *eigenPtr;
 		c = sp->shift;
 		n = sp->n;
-		vecPtr = result;
+		resPtr = result;
 		eigenPtr = eigenVec;
 		for (i = 0; i < n; i++){
-			*vecPtr = ((*eigenPtr) * c);
-			vecPtr++;
+			*resPtr = ((*eigenPtr) * c);
+			resPtr++;
 			eigenPtr++;
 		}
 }
@@ -184,9 +202,11 @@ int updateEigen(double *VBk, double *eigenVec, int n){
 	vecPtr = VBk;
 	eigPtr = eigenVec;
 	cnt = 0;
+	printf("\n");
 	for(i = 0; i < n; i++){
-		if(fabs(*eigPtr - *vecPtr) < epsilon) cnt++;
+		if(fabs((*eigPtr) - (*vecPtr)) < epsilon) cnt++;
 		*eigPtr = *vecPtr;
+		printf("%f, ", *eigPtr);
 		eigPtr++;
 		vecPtr++;
 	}
@@ -257,6 +277,7 @@ double* divByEigen(double* eigenVec, int n){
 	eigPtr = eigenVec;
 	for (i = 0; i < n; i++){
 		(IS_POSITIVE(*eigPtr)) ? (*divPtr = 1) : (*divPtr = -1);
+		printf("i = %d, in group = %f\n", i + 1, *divPtr);
 		divPtr++;
 		eigPtr++;
 	}
