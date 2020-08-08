@@ -21,6 +21,9 @@ void sumAll(double *aVec, double *bVec, double *cVec, double *result, int n);
 void normalize(double *vec, int n);
 double vecDot(double *aVec, double *bVec, int n);
 int updateEigen(double *VBk, double *eigenVec, int n);
+void printA(spmat *sp);
+void printB(spmat *sp);
+
 
 
 double* getRandVec(int n){
@@ -44,6 +47,8 @@ double* getEigenVec(spmat *sp){
 	double *eigenVec, *VBk, *aVec, *bVec, *cVec;
 
 	printf("\nIn:getEigenVec. starting the method");
+
+
 
 	n = sp->n;
 	/*Initializing with random values*/
@@ -115,25 +120,9 @@ void getRanksMult(double *eigenVec, spmat *sp, double *result){
 
 	m = sp->M;
 	n = sp->n;
-	/*
-	resPtr = result;
-	slowRnk= sp->ranks;
-	for(i = 0; i < n; i++){
-		sum = 0;
-		fastRnk= sp->ranks;
-		eigPtr = eigenVec;
-		for(j = 0; j < n; j++){
-			sum += (double)((*slowRnk) * (*fastRnk))*(*eigPtr)/m;
-			fastRnk++;
-			eigPtr++;
-		}
-		*resPtr = sum;
-		resPtr++;
-		slowRnk++;
-	}
-	*/
 	rnkPtr = sp->ranks;
 	eigPtr = eigenVec;
+	rnkConst = 0;
 	for(j = 0; j < n; j++){
 		rnkConst += (*rnkPtr)*(*eigPtr)/m;
 		eigPtr++;
@@ -145,22 +134,25 @@ void getRanksMult(double *eigenVec, spmat *sp, double *result){
 		*resPtr = (*rnkPtr) * rnkConst;
 		resPtr++;
 		rnkPtr++;
-
+	}
 }
+
+
+
 
 
 void getShiftMult(double *eigenVec, spmat *sp, double *result){
 	int n, i;
-		double c, *resPtr, *eigenPtr;
-		c = sp->shift;
-		n = sp->n;
-		resPtr = result;
-		eigenPtr = eigenVec;
-		for (i = 0; i < n; i++){
-			*resPtr = ((*eigenPtr) * c);
-			resPtr++;
-			eigenPtr++;
-		}
+	double c, *resPtr, *eigenPtr;
+	c = sp->shift;
+	n = sp->n;
+	resPtr = result;
+	eigenPtr = eigenVec;
+	for (i = 0; i < n; i++){
+		*resPtr = ((*eigenPtr) * c);
+		resPtr++;
+		eigenPtr++;
+	}
 }
 void sumAll(double *aVec, double *bVec, double *cVec, double *result, int n){
 	int i;
@@ -204,7 +196,10 @@ int updateEigen(double *VBk, double *eigenVec, int n){
 	cnt = 0;
 	printf("\n");
 	for(i = 0; i < n; i++){
-		if(fabs((*eigPtr) - (*vecPtr)) < epsilon) cnt++;
+		if(fabs((*eigPtr) - (*vecPtr)) < epsilon)
+			{
+			cnt++;
+			}
 		*eigPtr = *vecPtr;
 		printf("%f, ", *eigPtr);
 		eigPtr++;
@@ -315,6 +310,57 @@ double getModularity(spmat *sp, double *division){
 	free(cVec);
 	free(Bs);
 	return res;
+}
+
+
+void printA(spmat *sp){
+	int i, j, n, *colPtr;
+	double tmp, *valPtr;
+
+	printf("\n");
+	n = sp->n;
+	colPtr = sp->colind;
+	valPtr = sp->values;
+	for (i = 0; i < n; i++){
+		for(j = 0; j < n; j++){
+			tmp = 0;
+			if(*colPtr == j){
+				tmp += (*valPtr);
+				colPtr++;
+				valPtr++;
+			}
+			printf("%f, ", tmp);
+		}
+		printf("\n");
+	}
+
+}
+
+void printB(spmat *sp){
+	int i, j, n, *colPtr, *ranks;
+	double tmp, c, *valPtr, m;
+
+	c = sp->shift;
+	n = sp->n;
+	ranks = sp->ranks;
+	colPtr = sp->colind;
+	valPtr = sp->values;
+	m = sp->M;
+	printf("\n");
+	for (i = 0; i < n; i++){
+		for(j = 0; j < n; j++){
+			tmp = 0;
+			if(*colPtr == j){
+				tmp += (*valPtr);
+				colPtr++;
+				valPtr++;
+			}
+			if(i == j) tmp += c;
+			tmp -= (double)(ranks[i] * ranks[j])/m;
+			printf("%f, ", tmp);
+		}
+		printf("\n");
+	}
 }
 
 

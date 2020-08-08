@@ -102,7 +102,7 @@ void add_row(spmat *A, const int *row, int i, int rank){
 	while (j < rank){
 		*valueIndex = 1;
 		valueIndex++;
-		*colIndex = *index;
+		*colIndex = *index -1;
 		index++;
 		colIndex++;
 		j++;

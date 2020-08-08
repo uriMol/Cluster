@@ -25,7 +25,7 @@ typedef struct _spmat {
 	/* Matrix size (n*n) */
 	int		n;
 	/* 2 * edges OR sum of all ranks */
-	int		M;
+	double		M;
 	/*The value of '1' norm of the B matrix of this mat*/
 	double 	shift;
 
