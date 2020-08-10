@@ -17,6 +17,7 @@
 #include "SPBufferset.h"
 
 int main(int argc, char* argv[]){
+	group *g;
 	spmat *sp;
 	FILE *inputFile;
 	double *eigenVec, eigenVal, *division, Q;
@@ -43,8 +44,14 @@ int main(int argc, char* argv[]){
 	}
 
 	printf("\nIn:main. calling getEigenVec");
-
-	eigenVec = getEigenVec(sp);
+	/*
+	P = setGroups(sp);
+	g = getGroupToDivide(sp, P);
+	 */
+	g = (group*) malloc(sizeof(group));
+	/* TODO: add setting to g */
+	eigenVec = getEigenVec(sp, g);
+	free(g);
 
 	printf("\nIn:main. finish getEigenVec");
 

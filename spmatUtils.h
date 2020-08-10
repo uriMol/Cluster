@@ -12,7 +12,7 @@
 
 
 
-double* getEigenVec(spmat *sp);
+double* getEigenVec(spmat *sp, group *g);
 
 double* divByEigen(double* eigenVec, int n);
 

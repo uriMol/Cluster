@@ -23,6 +23,7 @@ double vecDot(double *aVec, double *bVec, int n);
 int updateEigen(double *VBk, double *eigenVec, int n);
 void printA(spmat *sp);
 void printB(spmat *sp);
+double* getF(spmat *sp, group *g);
 
 
 
@@ -42,9 +43,9 @@ double* getRandVec(int n){
 	return v;
 }
 
-double* getEigenVec(spmat *sp){
+double* getEigenVec(spmat *sp, group* g){
 	int n, smallDif;
-	double *eigenVec, *VBk, *aVec, *bVec, *cVec;
+	double *eigenVec, *VBk, *aVec, *bVec, *cVec, *f;
 
 	printf("\nIn:getEigenVec. starting the method");
 
@@ -55,9 +56,13 @@ double* getEigenVec(spmat *sp){
 
 	printf("\nIn:getEigenVec. calling getRandVec");
 
-	eigenVec = getRandVec(n);
+	eigenVec = getRandVec(g->len);
 
 	printf("\nIn:getEigenVec. revieced a random vec");
+
+
+	f = getF(sp, g);
+
 
 	VBk = (double*)malloc(n*sizeof(double));
 	CHECKNEQ(VBk, NULL, "malloc VBk");
@@ -87,6 +92,60 @@ double* getEigenVec(spmat *sp){
 	free(VBk);
 	return eigenVec;
 }
+
+double* getF(spmat *sp, group *g){
+	int i, j, len, *indPtr, *colInd, tmpRnk, tmpValSum;
+	double *f, tmpRnkMult, M, rnkConst;
+
+	M = sp->M;
+
+	len = g->len;
+	f = (double*) malloc(sizeof(double)*len);
+	rnkConst = 0;
+	for (i = 0; i < len; i++)
+	{
+		rnkConst += sp->ranks[g->indexes[i]];
+	}
+	rnkConst /= M;
+
+
+	for(i = 0; i < len; i++){
+		/* calculate all Aij */
+		tmpValSum = 0;
+		tmpRnk = sp->ranks[g->indexes[i]];
+		indPtr = g->indexes;
+		colInd = &(sp->colind[sp->rowptr[indPtr[i]]]);
+		j = 0;
+		while (tmpRnk > 0 && j < len)
+		{
+			if (*colInd < *indPtr)
+			{
+				colInd++;
+				tmpRnk--;
+			}
+			else if(*indPtr < *colInd)
+			{
+				indPtr++;
+				j++;
+			}
+			else /* they are equal */
+			{
+				tmpValSum++;
+				indPtr++;
+				colInd++;
+				j++;
+				tmpRnk--;
+			}
+		}
+		/* calcaulate ranksMult */
+		tmpRnkMult = sp->ranks[g->indexes[i]] * rnkConst;
+		f[i] = tmpValSum - tmpRnkMult;
+	}
+	return f;
+}
+
+
+
 
 void getAVmult(const double *v, const spmat *A, double *result){
 	/*initializing */
