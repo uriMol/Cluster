@@ -41,6 +41,7 @@ int main(int argc, char* argv[]){
 	printf("\nIn:main. finish calling spmat_setting");
 
 	if(sp->M == 0){
+		printf("\nIn:main. checking sp->M == 0 getEigenVec");
 		return -1;
 		/*TODO special case*/
 	}
