@@ -12,12 +12,14 @@
 
 
 
-double* getEigenVec(spmat *sp, group *g);
+double* getEigenVec(subSpmat *subSp, double *f);
 
 double* divByEigen(double* eigenVec, int n);
 
-double getEigenVal(double *eigenVec, spmat *sp);
+double getEigenVal(double *eigenVec, subSpmat *sp, double *f);
 
-double getModularity(spmat *sp, double *division);
+double getModularity(subSpmat *subSp, double *division);
+
+double* getF(spmat *sp, group *g);
 
 #endif /* SPMATUTILS_H_ */

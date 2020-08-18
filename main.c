@@ -19,8 +19,10 @@
 int main(int argc, char* argv[]){
 	group *g;
 	spmat *sp;
+	subSpmat *subSp;
 	FILE *inputFile;
-	double *eigenVec, eigenVal, *division, Q;
+	int i;
+	double *eigenVec, eigenVal, *division, Q, *f;
 
 	/*SP_BUFF_SET();*/
 
@@ -49,15 +51,25 @@ int main(int argc, char* argv[]){
 	g = getGroupToDivide(sp, P);
 	 */
 	g = (group*) malloc(sizeof(group));
+	g->len = sp->n;
+	for (i = 0; i < g->len; i++)
+	{
+		g->indexes[i] = i;
+	}
+
+	subSp = extractSubMatrix(sp, g);
+
+	f = getF(sp, g);
+
 	/* TODO: add setting to g */
-	eigenVec = getEigenVec(sp, g);
+	eigenVec = getEigenVec(subSp, f);
 	free(g);
 
 	printf("\nIn:main. finish getEigenVec");
 
 	printf("\nIn: main. calling getEigenVal");
 
-	eigenVal = getEigenVal(eigenVec, sp);
+	eigenVal = getEigenVal(eigenVec, subSp, f);
 
 	printf("\nIn:main. finish getEigenVal");
 
@@ -74,7 +86,7 @@ int main(int argc, char* argv[]){
 
 	printf("\nIn:main. calling getModularity");
 
-	Q = getModularity(sp, division);
+	Q = getModularity(subSp, division);
 
 	printf("\nIn: main. finish getModularity");
 

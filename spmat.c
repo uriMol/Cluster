@@ -14,8 +14,6 @@
 void add_row(struct _spmat* , const int*, int, int);
 void arr_free(spmat*);
 
-
-
 spmat* spmat_setting(FILE *inputFile){
 	int k, i, tmpRank, vertices, ranks, *junk, *tmpRow;
 	spmat *sp;
@@ -37,10 +35,7 @@ spmat* spmat_setting(FILE *inputFile){
 		k = fread(junk, sizeof(int), tmpRank, inputFile);
 		CHECKEQ(k, tmpRank, "Reading File");
 	}
-
-
 	/*Allocating the matrix */
-
 	printf("\nIn: spmat_setting. Calling spmat_allocate_array");
 
 	sp = spmat_allocate_array(vertices, ranks);
@@ -63,20 +58,77 @@ spmat* spmat_setting(FILE *inputFile){
 		CHECKEQ(k, tmpRank, "Reading File");
 		add_row(sp, tmpRow, i, tmpRank);
 	}
-
 	printf("\nIn: spmat_setting. Finish adding all rows");
-
 	free(tmpRow);
 	free(junk);
-
-
 	printf("\nIn:spmat_seeting. Calling getShift");
-
 	sp->shift = getShift(sp);
-
 	printf("\nIn: spmat_setting. Finish getShift, finish spmat_setting");
 
 	return sp;
+}
+
+subSpmat* extractSubMatrix(spmat *sp, group *g)
+{
+	int len, i, j, subM, *colInd, tmpRnk, subTmpRnk, *subRnkPtr, *subColPtr, *indPtr;
+	subSpmat *subSp;
+	double *subValPtr;
+
+	len = g->len;
+	/* allocating the arrays */
+	subSp = (subSpmat*) malloc(sizeof(subSpmat));
+	subSp->subRanks = (int*) malloc(sizeof(int) * len);
+	subRnkPtr = subSp->subRanks;
+	subSp->M = sp->M;
+	subSp->subValues = (double*) malloc(sizeof(double) * sp->M);
+	subValPtr = subSp->subValues;
+	subColPtr = subSp->subColind;
+	subSp->origRanks = sp->ranks;
+	subSp->subColind = (int*) malloc(sizeof(int) * sp->M);
+	subSp->g = g->indexes;
+	subSp->shift = sp->shift;
+	subSp->n = len;
+
+	subM = 0;
+	for(i = 0; i < len; i++){
+		/* calculate all Aij */
+		subTmpRnk = 0;
+		tmpRnk = sp->ranks[g->indexes[i]];
+		indPtr = g->indexes;
+		colInd = &(sp->colind[sp->rowptr[indPtr[i]]]);
+		j = 0;
+		while (tmpRnk > 0 && j < len)
+		{
+			if (*colInd < *indPtr)
+			{
+				colInd++;
+				tmpRnk--;
+			}
+			else if(*indPtr < *colInd)
+			{
+				indPtr++;
+				j++;
+			}
+			else /* they are equal */
+			{
+				*subValPtr = 1;
+				subValPtr++;
+				*subColPtr = j;
+				subColPtr++;
+				subTmpRnk++;
+				indPtr++;
+				j++;
+				tmpRnk--;
+			}
+		}
+		*subRnkPtr = subTmpRnk;
+		subRnkPtr++;
+		subM += subTmpRnk;
+	}
+	subSp->subColind = (int*)realloc(subSp->subColind, subM);
+	subSp->subValues = (double*)realloc(subSp->subValues, subM);
+	subSp->subM = subM;
+	return subSp;
 }
 
 void add_row(spmat *A, const int *row, int i, int rank){

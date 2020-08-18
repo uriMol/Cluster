@@ -14,16 +14,15 @@
 
 
 double* getRandVec(int n);
-void getAVmult(const double *eigenVec, const spmat *sp, double* result);
-void getRanksMult(double *eigenVec, spmat *sp, double *result);
-void getShiftMult(double *eigenVec, spmat *sp, double *result);
+void getAVmult(const double *eigenVec, subSpmat *sp, double* result);
+void getRanksMult(double *eigenVec, subSpmat *sp, double *result);
+void getShiftandFMult(double *eigenVec, subSpmat *sp,double *f, double *result);
 void sumAll(double *aVec, double *bVec, double *cVec, double *result, int n);
 void normalize(double *vec, int n);
 double vecDot(double *aVec, double *bVec, int n);
 int updateEigen(double *VBk, double *eigenVec, int n);
 void printA(spmat *sp);
 void printB(spmat *sp);
-double* getF(spmat *sp, group *g);
 
 
 
@@ -43,27 +42,19 @@ double* getRandVec(int n){
 	return v;
 }
 
-double* getEigenVec(spmat *sp, group* g){
+double* getEigenVec(subSpmat *subSp, double* f){
 	int n, smallDif;
-	double *eigenVec, *VBk, *aVec, *bVec, *cVec, *f;
+	double *eigenVec, *VBk, *aVec, *bVec, *cVec;
 
 	printf("\nIn:getEigenVec. starting the method");
-
-
-
-	n = sp->n;
+	n = subSp->n;
 	/*Initializing with random values*/
 
 	printf("\nIn:getEigenVec. calling getRandVec");
 
-	eigenVec = getRandVec(g->len);
+	eigenVec = getRandVec(n);
 
 	printf("\nIn:getEigenVec. revieced a random vec");
-
-
-	f = getF(sp, g);
-
-
 	VBk = (double*)malloc(n*sizeof(double));
 	CHECKNEQ(VBk, NULL, "malloc VBk");
 	aVec = (double*)malloc(n*sizeof(double));
@@ -76,9 +67,9 @@ double* getEigenVec(spmat *sp, group* g){
 	printf("\nIn:getEigenVec. starting power iterations");
 
 	while(smallDif != n){
-		getAVmult(eigenVec, sp, aVec);
-		getRanksMult(eigenVec, sp, bVec);
-		getShiftMult(eigenVec, sp, cVec);
+		getAVmult(eigenVec, subSp, aVec);
+		getRanksMult(eigenVec, subSp, bVec);
+		getShiftandFMult(eigenVec, subSp, f, cVec);
 		sumAll(aVec, bVec, cVec, VBk, n);
 		normalize(VBk, n);
 		smallDif = updateEigen(VBk, eigenVec, n);
@@ -93,124 +84,70 @@ double* getEigenVec(spmat *sp, group* g){
 	return eigenVec;
 }
 
-double* getF(spmat *sp, group *g){
-	int i, j, len, *indPtr, *colInd, tmpRnk, tmpValSum;
-	double *f, tmpRnkMult, M, rnkConst;
 
-	M = sp->M;
-
-	len = g->len;
-	f = (double*) malloc(sizeof(double)*len);
-	rnkConst = 0;
-	for (i = 0; i < len; i++)
-	{
-		rnkConst += sp->ranks[g->indexes[i]];
-	}
-	rnkConst /= M;
-
-
-	for(i = 0; i < len; i++){
-		/* calculate all Aij */
-		tmpValSum = 0;
-		tmpRnk = sp->ranks[g->indexes[i]];
-		indPtr = g->indexes;
-		colInd = &(sp->colind[sp->rowptr[indPtr[i]]]);
-		j = 0;
-		while (tmpRnk > 0 && j < len)
-		{
-			if (*colInd < *indPtr)
-			{
-				colInd++;
-				tmpRnk--;
-			}
-			else if(*indPtr < *colInd)
-			{
-				indPtr++;
-				j++;
-			}
-			else /* they are equal */
-			{
-				tmpValSum++;
-				indPtr++;
-				colInd++;
-				j++;
-				tmpRnk--;
-			}
-		}
-		/* calcaulate ranksMult */
-		tmpRnkMult = sp->ranks[g->indexes[i]] * rnkConst;
-		f[i] = tmpValSum - tmpRnkMult;
-	}
-	return f;
-}
-
-
-
-
-void getAVmult(const double *v, const spmat *A, double *result){
+void getAVmult(const double *v, subSpmat *A, double *result){
 	/*initializing */
-	int i, j, *colIndex, *rowPointer;
+	int i, j, *colIndex, *subRnkPtr, tmpRnk;
 	double *value, tmp_result, *resPtr;
 
 	/*setting the variables*/
-	value = A->values;
-	colIndex = A->colind;
-	rowPointer = A->rowptr;
+	value = A->subValues;
+	colIndex = A->subColind;
+	subRnkPtr = A->subRanks;
 	resPtr = result;
-
 
 	/*looping and multiplying*/
 	for (i = 0; i < A->n; i++){
 		tmp_result = (double) 0;
-		for (j = *rowPointer; j < *(rowPointer + 1); j++){
+		tmpRnk = *subRnkPtr;
+		for (j = 0; j < tmpRnk; j++){
 			tmp_result += (*value * v[*colIndex]);
 			value++;
 			colIndex++;
 		}
-		rowPointer++;
+		subRnkPtr++;
 		*resPtr = tmp_result;
 		resPtr++;
 	}
 }
 
-void getRanksMult(double *eigenVec, spmat *sp, double *result){
-	int n, i, j, *rnkPtr;
+void getRanksMult(double *eigenVec, subSpmat *sp, double *result){
+	int n, i, j, *rnkPtr, *gPtr;
 	double *resPtr, *eigPtr, m, rnkConst;
 
 	m = sp->M;
 	n = sp->n;
-	rnkPtr = sp->ranks;
+	rnkPtr = sp->origRanks;
 	eigPtr = eigenVec;
 	rnkConst = 0;
+	gPtr = sp->g;
 	for(j = 0; j < n; j++){
-		rnkConst += (*rnkPtr)*(*eigPtr)/m;
+		rnkConst += (rnkPtr[*gPtr])*(*eigPtr)/m;
 		eigPtr++;
-		rnkPtr++;
+		gPtr++;
 	}
-	rnkPtr = sp->ranks;
 	resPtr = result;
+	gPtr = sp->g;
 	for(i = 0; i < n; i++){
-		*resPtr = (*rnkPtr) * rnkConst;
+		*resPtr = (rnkPtr[*gPtr]) * rnkConst;
 		resPtr++;
-		rnkPtr++;
+		gPtr++;
 	}
 }
 
-
-
-
-
-void getShiftMult(double *eigenVec, spmat *sp, double *result){
+void getShiftandFMult(double *eigenVec, subSpmat *sp, double *f, double *result){
 	int n, i;
-	double c, *resPtr, *eigenPtr;
+	double *fPtr, c, *resPtr, *eigenPtr;
 	c = sp->shift;
 	n = sp->n;
+	fPtr = f;
 	resPtr = result;
 	eigenPtr = eigenVec;
 	for (i = 0; i < n; i++){
-		*resPtr = ((*eigenPtr) * c);
+		*resPtr = ((*eigenPtr) * (c - *fPtr));
 		resPtr++;
 		eigenPtr++;
+		fPtr++;
 	}
 }
 void sumAll(double *aVec, double *bVec, double *cVec, double *result, int n){
@@ -267,7 +204,7 @@ int updateEigen(double *VBk, double *eigenVec, int n){
 	return cnt;
 }
 
-double getEigenVal(double *eigenVec, spmat *sp){
+double getEigenVal(double *eigenVec, subSpmat *sp, double *f){
 	int n;
 	double *aVec, *bVec, *cVec, *BVk, res;
 
@@ -288,7 +225,7 @@ double getEigenVal(double *eigenVec, spmat *sp){
 
 	getAVmult(eigenVec, sp, aVec);
 	getRanksMult(eigenVec, sp, bVec);
-	getShiftMult(eigenVec, sp, cVec);
+	getShiftandFMult(eigenVec, sp, f, cVec);
 	sumAll(aVec, bVec, cVec, BVk, n);
 
 	res = ((vecDot(eigenVec, BVk, n) / vecDot(eigenVec, eigenVec, n)) - sp->shift);
@@ -341,7 +278,7 @@ double* divByEigen(double* eigenVec, int n){
 	return division;
 }
 
-double getModularity(spmat *sp, double *division){
+double getModularity(subSpmat *sp, double *division){
 	int n;
 	double *Bs, *aVec, *bVec, *cVec, res;
 
@@ -371,7 +308,56 @@ double getModularity(spmat *sp, double *division){
 	return res;
 }
 
+double* getF(spmat *sp, group *g){
+	int i, j, len, *indPtr, *colInd, tmpRnk, tmpValSum;
+	double *f, tmpRnkMult, M, rnkConst, *fPtr;
 
+	M = sp->M;
+
+	len = g->len;
+	f = (double*) malloc(sizeof(double)*len);
+	fPtr = f;
+	rnkConst = 0;
+	for (i = 0; i < len; i++)
+	{
+		rnkConst += sp->ranks[g->indexes[i]];
+	}
+	rnkConst /= M;
+	for(i = 0; i < len; i++){
+		/* calculate all Aij */
+		tmpValSum = 0;
+		tmpRnk = sp->ranks[g->indexes[i]];
+		tmpRnkMult = tmpRnk * rnkConst;
+		indPtr = g->indexes;
+		colInd = &(sp->colind[sp->rowptr[indPtr[i]]]);
+		j = 0;
+		while (tmpRnk > 0 && j < len)
+		{
+			if (*colInd < *indPtr)
+			{
+				colInd++;
+				tmpRnk--;
+			}
+			else if(*indPtr < *colInd)
+			{
+				indPtr++;
+				j++;
+			}
+			else /* they are equal */
+			{
+				tmpValSum++;
+				indPtr++;
+				colInd++;
+				j++;
+				tmpRnk--;
+			}
+		}
+		/* calcaulate ranksMult */
+		*fPtr = tmpValSum - tmpRnkMult;
+		fPtr++;
+	}
+	return f;
+}
 void printA(spmat *sp){
 	int i, j, n, *colPtr;
 	double tmp, *valPtr;
