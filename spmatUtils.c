@@ -34,6 +34,7 @@ double* getRandVec(int n){
 	printf("\nIn:getRandVec. starting to create random vector");
 
 	v = (double*)malloc(n*sizeof(double));
+	CHECKNEQ(v, NULL, "allocating randVec v");
 	for (i = 0; i < n; i++){
 		v[i] = rand();
 	}
@@ -180,6 +181,7 @@ void normalize(double *vec, int n){
 	}
 	vecPtr = vec;
 	sum = sqrt(sum);
+	if(sum == 0) return;
 	for (i = 0; i < n; i++){
 		*vecPtr /= sum;
 		vecPtr++;
@@ -192,14 +194,12 @@ int updateEigen(double *VBk, double *eigenVec, int n){
 	vecPtr = VBk;
 	eigPtr = eigenVec;
 	cnt = 0;
-	printf("\n");
 	for(i = 0; i < n; i++){
 		if(fabs((*eigPtr) - (*vecPtr)) < epsilon)
 			{
 			cnt++;
 			}
 		*eigPtr = *vecPtr;
-		printf("%f, ", *eigPtr);
 		eigPtr++;
 		vecPtr++;
 	}
@@ -229,6 +229,10 @@ double getEigenVal(double *eigenVec, subSpmat *sp, double *f){
 	getRanksMult(eigenVec, sp, bVec);
 	getShiftandFMult(eigenVec, sp, f, cVec);
 	sumAll(aVec, bVec, cVec, BVk, n);
+
+	/*
+	 * TODO check what to do if (vecDot(eigenVec, eigenVec, n) == 0)
+	 */
 
 	res = ((vecDot(eigenVec, BVk, n) / vecDot(eigenVec, eigenVec, n)) - sp->shift);
 
@@ -266,11 +270,11 @@ double* divByEigen(double* eigenVec, int n){
 	printf("\nIn:divByEigen. starting the method");
 
 	division = (double*)malloc(n*sizeof(double));
+	CHECKNEQ(division, NULL, "allocating division in divByEigen");
 	divPtr = division;
 	eigPtr = eigenVec;
 	for (i = 0; i < n; i++){
 		(IS_POSITIVE(*eigPtr)) ? (*divPtr = 1) : (*divPtr = -1);
-		printf("i = %d, in group = %f\n", i + 1, *divPtr);
 		divPtr++;
 		eigPtr++;
 	}
@@ -318,6 +322,7 @@ double* getF(spmat *sp, group *g){
 
 	len = g->len;
 	f = (double*) malloc(sizeof(double)*len);
+	CHECKNEQ(f, NULL, "allocating f");
 	fPtr = f;
 	rnkConst = 0;
 	for (i = 0; i < len; i++)

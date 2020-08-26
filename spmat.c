@@ -25,6 +25,8 @@ spmat* spmat_setting(FILE *inputFile){
 
 	junk = (int*)malloc(sizeof(int) * vertices);
 
+	CHECKNEQ(junk, NULL, "malloc junk");
+
 	/* checking sum of ranks*/
 	ranks = 0;
 	for (i = 0; i < vertices; i++)
@@ -77,13 +79,17 @@ subSpmat* extractSubMatrix(spmat *sp, group *g)
 	len = g->len;
 	/* allocating the arrays */
 	subSp = (subSpmat*) malloc(sizeof(subSpmat));
+	CHECKNEQ(subSp, NULL, "allocating subSp");
 	subSp->subRanks = (int*) malloc(sizeof(int) * len);
+	CHECKNEQ(subSp->subRanks, NULL, "allocating subSp->subRanks");
 	subRnkPtr = subSp->subRanks;
 	subSp->M = sp->M;
 	subSp->subValues = (double*) malloc(sizeof(double) * sp->M);
+	CHECKNEQ(subSp->subValues, NULL, "allocating subSp->subValues");
 	subValPtr = subSp->subValues;
 	subSp->origRanks = sp->ranks;
 	subSp->subColind = (int*) malloc(sizeof(int) * sp->M);
+	CHECKNEQ(subSp->subColind, NULL, "allocating subSp->subColind");
 	subColPtr = subSp->subColind;
 	subSp->g = g->indexes;
 	subSp->shift = sp->shift;
@@ -127,7 +133,9 @@ subSpmat* extractSubMatrix(spmat *sp, group *g)
 		subM += subTmpRnk;
 	}
 	subSp->subColind = (int*)realloc(subSp->subColind, subM*sizeof(int));
+	CHECKNEQ(subSp->subColind, NULL, "allocating subSp->subColind");
 	subSp->subValues = (double*)realloc(subSp->subValues, subM*sizeof(double));
+	CHECKNEQ(subSp->subValues, NULL, "allocating subSp->subValues");
 	subSp->subM = subM;
 	return subSp;
 }

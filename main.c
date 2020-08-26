@@ -30,7 +30,7 @@ int main(int argc, char* argv[]){
 
 
 	inputFile = fopen(argv[1], "r");
-	/* assert open success */
+	CHECKNEQ(inputFile, NULL, "open file error");
 
 	/* allocating the array, setting it up with all values */
 
