@@ -14,7 +14,7 @@
 
 double* getEigenVec(subSpmat *subSp, double *f);
 
-void divG1G2(double* eigenVec, int n, group* g1, group* g2);
+void divG1G2(double* eigenVec, int n, group** g1, group** g2);
 
 double* divByEigen(double* eigenVec, int n);
 

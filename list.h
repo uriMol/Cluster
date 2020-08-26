@@ -25,6 +25,8 @@ typedef struct list{
 list* createP(int n);
 list* createO();
 list* listAdd(list *L, group *g);
+void printO(list* O);
+
 
 
 

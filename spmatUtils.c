@@ -12,7 +12,6 @@
 #include <math.h>
 #define epsilon 0.0001
 
-
 double* getRandVec(int n);
 void getAVmult(const double *eigenVec, subSpmat *sp, double* result);
 void getRanksMult(double *eigenVec, subSpmat *sp, double *result);
@@ -263,7 +262,7 @@ double vecDot(double *aVec, double *bVec, int n){
 
 
 
-void divG1G2(double* eigenVec, int n, group* g1, group* g2){
+void divG1G2(double* eigenVec, int n, group** g1, group** g2){
 	int i, g1len, g2len, *g1Ptr, *g2Ptr;
 	double *eigPtr;
 
@@ -271,16 +270,16 @@ void divG1G2(double* eigenVec, int n, group* g1, group* g2){
 	eigPtr = eigenVec;
 	g1len = 0;
 	g2len = 0;
-	g1 = (group*)malloc(sizeof(group));
+	*g1 = (group*)malloc(sizeof(group));
 	CHECKNEQ(g1, NULL, "allocating g1 in divByEigen");
-	g1->indexes = (int*) malloc(sizeof(int)*n);
-	CHECKNEQ(g1->indexes, NULL, "allocating g1->indexes in divByEigen");
-	g2 = (group*)malloc(sizeof(group));
+	(*g1)->indexes = (int*) malloc(sizeof(int)*n);
+	CHECKNEQ((*g1)->indexes, NULL, "allocating g1->indexes in divByEigen");
+	(*g2) = (group*)malloc(sizeof(group));
 	CHECKNEQ(g2, NULL, "allocating g2 in divByEigen");
-	g2->indexes = (int*) malloc(sizeof(int)*n);
-	CHECKNEQ(g2->indexes, NULL, "allocating g2->indexes in divByEigen");
-	g1Ptr = g1->indexes;
-	g2Ptr = g2->indexes;
+	(*g2)->indexes = (int*) malloc(sizeof(int)*n);
+	CHECKNEQ((*g2)->indexes, NULL, "allocating g2->indexes in divByEigen");
+	g1Ptr = (*g1)->indexes;
+	g2Ptr = (*g2)->indexes;
 	for (i = 0; i < n; i++){
 		if(IS_POSITIVE(*eigPtr)){
 			*g1Ptr = i;
@@ -293,10 +292,10 @@ void divG1G2(double* eigenVec, int n, group* g1, group* g2){
 		}
 		eigPtr++;
 	}
-	g1->len = g1len;
-	g2->len = g2len;
-	g1->indexes = (int*) realloc(g1->indexes, sizeof(int)*g1len);
-	g1->indexes = (int*) realloc(g2->indexes, sizeof(int)*g1len);
+	(*g1)->len = g1len;
+	(*g2)->len = g2len;
+	(*g1)->indexes = (int*) realloc((*g1)->indexes, sizeof(int)*g1len);
+	(*g2)->indexes = (int*) realloc((*g2)->indexes, sizeof(int)*g1len);
 
 	printf("\nIn:divByEigen. finished division of the graph");
 }
@@ -452,6 +451,7 @@ double* divByEigen(double* eigenVec, int n){
 
 	return division;
 }
+
 
 
 

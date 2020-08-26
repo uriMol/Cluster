@@ -59,25 +59,42 @@ int main(int argc, char* argv[]){
 	 * Starting the division while loop
 	 */
 
-	while(P->g != NULL){
+	while(P != NULL){
 		g = P->g;
 		P = P->next;
 		divideG(sp, g, &g1, &g2);
-		if(g1 != NULL){
-			if(g1->len == 1){
+		if(g1 == NULL)
+		{
+			O = listAdd(O, g2);
+		}
+		else if (g2 == NULL)
+		{
+			O = listAdd(O, g1);
+		}
+		else
+		{
+			if(g1->len == 1)
+			{
 				O = listAdd(O, g1);
-			} else{
+			}
+			else
+			{
 				P = listAdd(P, g1);
 			}
-		}
-		if(g2 != NULL){
-			if(g2->len == 1){
+			if(g2->len == 1)
+			{
 				O = listAdd(O, g2);
-			} else{
+			}
+			else
+			{
 				P = listAdd(P, g2);
 			}
 		}
+		printf("\n");
+		printO(O);
+
 	}
+
 
 	/*TODO return s - the division*/
 	CHECKEQ (argc, argc, "argc");
@@ -118,7 +135,7 @@ void divideG(spmat *sp, group *g, group **g1, group **g2){
 		return;
 	}
 
-	divG1G2(eigenVec, sp->n, *g1, *g2);
+	divG1G2(eigenVec, sp->n, g1, g2);
 
 
 }

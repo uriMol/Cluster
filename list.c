@@ -53,4 +53,16 @@ list* listAdd(list *L, group *g){
 }
 
 
+void printO(list* O){
+	int i;
+	list *tmp;
+	tmp = O;
+	while (tmp->g != NULL){
+		printf("\n");
+		for(i = 0; i < tmp->g->len; i++){
+			printf("%d, ", tmp->g->indexes[i]);
+		}
+		tmp = tmp->next;
+	}
+}
 
