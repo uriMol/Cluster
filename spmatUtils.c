@@ -295,7 +295,7 @@ void divG1G2(double* eigenVec, int n, group** g1, group** g2){
 	(*g1)->len = g1len;
 	(*g2)->len = g2len;
 	(*g1)->indexes = (int*) realloc((*g1)->indexes, sizeof(int)*g1len);
-	(*g2)->indexes = (int*) realloc((*g2)->indexes, sizeof(int)*g1len);
+	(*g2)->indexes = (int*) realloc((*g2)->indexes, sizeof(int)*g2len);
 
 	printf("\nIn:divByEigen. finished division of the graph");
 }
