@@ -82,9 +82,9 @@ subSpmat* extractSubMatrix(spmat *sp, group *g)
 	subSp->M = sp->M;
 	subSp->subValues = (double*) malloc(sizeof(double) * sp->M);
 	subValPtr = subSp->subValues;
-	subColPtr = subSp->subColind;
 	subSp->origRanks = sp->ranks;
 	subSp->subColind = (int*) malloc(sizeof(int) * sp->M);
+	subColPtr = subSp->subColind;
 	subSp->g = g->indexes;
 	subSp->shift = sp->shift;
 	subSp->n = len;
@@ -117,6 +117,7 @@ subSpmat* extractSubMatrix(spmat *sp, group *g)
 				subColPtr++;
 				subTmpRnk++;
 				indPtr++;
+				colInd++;
 				j++;
 				tmpRnk--;
 			}
@@ -125,8 +126,8 @@ subSpmat* extractSubMatrix(spmat *sp, group *g)
 		subRnkPtr++;
 		subM += subTmpRnk;
 	}
-	subSp->subColind = (int*)realloc(subSp->subColind, subM);
-	subSp->subValues = (double*)realloc(subSp->subValues, subM);
+	subSp->subColind = (int*)realloc(subSp->subColind, subM*sizeof(int));
+	subSp->subValues = (double*)realloc(subSp->subValues, subM*sizeof(double));
 	subSp->subM = subM;
 	return subSp;
 }
@@ -154,7 +155,7 @@ void add_row(spmat *A, const int *row, int i, int rank){
 	while (j < rank){
 		*valueIndex = 1;
 		valueIndex++;
-		*colIndex = *index -1;
+		*colIndex = *index;
 		index++;
 		colIndex++;
 		j++;

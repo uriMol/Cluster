@@ -66,6 +66,8 @@ double* getEigenVec(subSpmat *subSp, double* f){
 
 	printf("\nIn:getEigenVec. starting power iterations");
 
+	smallDif = 0;
+
 	while(smallDif != n){
 		getAVmult(eigenVec, subSp, aVec);
 		getRanksMult(eigenVec, subSp, bVec);

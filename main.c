@@ -53,6 +53,7 @@ int main(int argc, char* argv[]){
 	 */
 	g = (group*) malloc(sizeof(group));
 	g->len = sp->n;
+	g->indexes = (int*)malloc(sizeof(int) * g->len);
 	for (i = 0; i < g->len; i++)
 	{
 		g->indexes[i] = i;
