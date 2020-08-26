@@ -263,25 +263,42 @@ double vecDot(double *aVec, double *bVec, int n){
 
 
 
-double* divByEigen(double* eigenVec, int n){
-	int i;
-	double *division, *divPtr, *eigPtr;
+void divG1G2(double* eigenVec, int n, group* g1, group* g2){
+	int i, g1len, g2len, *g1Ptr, *g2Ptr;
+	double *eigPtr;
 
 	printf("\nIn:divByEigen. starting the method");
-
-	division = (double*)malloc(n*sizeof(double));
-	CHECKNEQ(division, NULL, "allocating division in divByEigen");
-	divPtr = division;
 	eigPtr = eigenVec;
+	g1len = 0;
+	g2len = 0;
+	g1 = (group*)malloc(sizeof(group));
+	CHECKNEQ(g1, NULL, "allocating g1 in divByEigen");
+	g1->indexes = (int*) malloc(sizeof(int)*n);
+	CHECKNEQ(g1->indexes, NULL, "allocating g1->indexes in divByEigen");
+	g2 = (group*)malloc(sizeof(group));
+	CHECKNEQ(g2, NULL, "allocating g2 in divByEigen");
+	g2->indexes = (int*) malloc(sizeof(int)*n);
+	CHECKNEQ(g2->indexes, NULL, "allocating g2->indexes in divByEigen");
+	g1Ptr = g1->indexes;
+	g2Ptr = g2->indexes;
 	for (i = 0; i < n; i++){
-		(IS_POSITIVE(*eigPtr)) ? (*divPtr = 1) : (*divPtr = -1);
-		divPtr++;
+		if(IS_POSITIVE(*eigPtr)){
+			*g1Ptr = i;
+			g1len++;
+			g1Ptr++;
+		} else{
+			*g2Ptr = i;
+			g2len++;
+			g2Ptr++;
+		}
 		eigPtr++;
 	}
+	g1->len = g1len;
+	g2->len = g2len;
+	g1->indexes = (int*) realloc(g1->indexes, sizeof(int)*g1len);
+	g1->indexes = (int*) realloc(g2->indexes, sizeof(int)*g1len);
 
 	printf("\nIn:divByEigen. finished division of the graph");
-
-	return division;
 }
 
 double getModularity(subSpmat *sp, double *division){
@@ -414,6 +431,28 @@ void printB(spmat *sp){
 		printf("\n");
 	}
 }
+
+double* divByEigen(double* eigenVec, int n){
+	int i;
+	double *division, *divPtr, *eigPtr;
+
+	printf("\nIn:divByEigen. starting the method");
+
+	division = (double*)malloc(n*sizeof(double));
+	divPtr = division;
+	eigPtr = eigenVec;
+	for (i = 0; i < n; i++){
+		(IS_POSITIVE(*eigPtr)) ? (*divPtr = 1) : (*divPtr = -1);
+		printf("i = %d, in group = %f\n", i + 1, *divPtr);
+		divPtr++;
+		eigPtr++;
+	}
+
+	printf("\nIn:divByEigen. finished division of the graph");
+
+	return division;
+}
+
 
 
 
