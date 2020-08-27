@@ -26,38 +26,25 @@ int main(int argc, char* argv[]){
 	FILE *inputFile;
 
 	/*SP_BUFF_SET();*/
-
-	printf("\nIn: main. Starting main");
+	printf("\nIn: main, start");
 
 
 	inputFile = fopen(argv[1], "r");
 	CHECKNEQ(inputFile, NULL, "open file error");
 
 	/* allocating the array, setting it up with all values */
-
-	printf("\nIn:main. calling spmat_setting");
-
 	sp = spmat_setting(inputFile);
 
-	printf("\nIn:main. finish calling spmat_setting");
-
 	if(sp->M == 0){
-		printf("\nIn:main. checking sp->M == 0 getEigenVec");
+		printf("\nIn:main, checking sp->M == 0 getEigenVec");
 		return -1;
 		/*TODO special case*/
 	}
-
-
-	/*
-	 * allocating P and O
-	 */
+	/* allocating P and O */
 	P = createP(sp->n);
-
 	O = createO();
 
-	/*
-	 * Starting the division while loop
-	 */
+	/* Starting the division while loop */
 
 	while(P != NULL){
 		g = P->g;
@@ -92,31 +79,23 @@ int main(int argc, char* argv[]){
 		}
 		printf("\n");
 		printO(O);
-
 	}
-
-
 	/*TODO return s - the division*/
 	CHECKEQ (argc, argc, "argc");
 
-	printf("\nIn: main. finish running, the divisio is ready");
+	printf("\nIn: main, complete");
 	return 0;
 }
 
 void divideG(spmat *sp, group *g, group **g1, group **g2){
-
 	subSpmat *subSp;
 	double *eigenVec, eigenVal, *division, Q, *f;
 
-
-	printf("\nIn:divideG, starting.");
+	printf("\nIn:divideG, start");
 
 	subSp = extractSubMatrix(sp, g);
-
 	f = getF(sp, g);
-
 	eigenVec = getEigenVec(subSp, f);
-
 	eigenVal = getEigenVal(eigenVec, subSp, f);
 
 	if (!IS_POSITIVE(eigenVal)){
@@ -126,9 +105,8 @@ void divideG(spmat *sp, group *g, group **g1, group **g2){
 	}
 
 	division = divByEigen(eigenVec, subSp->n);
-
 	Q = getModularity(subSp, division);
-
+	division = modMaximization(subSp, division, g);
 	if (!IS_POSITIVE(Q)){
 		*g1 = g;
 		*g2 = NULL;
@@ -137,6 +115,7 @@ void divideG(spmat *sp, group *g, group **g1, group **g2){
 
 	divG1G2(eigenVec, subSp->n, g, g1, g2);
 
+	printf("\nIn:divideG, complete");
 
 }
 

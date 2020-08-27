@@ -6,6 +6,7 @@
  */
 
 #include "spmat.h"
+#include "modularityMax.h"
 #ifndef SPMATUTILS_H_
 #define SPMATUTILS_H_
 #define IS_POSITIVE(X) ((X) > 0.00001)
@@ -23,5 +24,7 @@ double getEigenVal(double *eigenVec, subSpmat *sp, double *f);
 double getModularity(subSpmat *subSp, double *division);
 
 double* getF(spmat *sp, group *g);
+
+double* modMaximization(subSpmat *subSp,double *division,group *g);
 
 #endif /* SPMATUTILS_H_ */

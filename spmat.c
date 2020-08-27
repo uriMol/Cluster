@@ -18,13 +18,12 @@ spmat* spmat_setting(FILE *inputFile){
 	int k, i, tmpRank, vertices, ranks, *junk, *tmpRow;
 	spmat *sp;
 
-	printf("\nIn: spmat_setting. Starting spmat_setting");
+	printf("\nIn: spmat_setting, start");
 
 	k = fread(&vertices, sizeof(int), 1, inputFile);
 	CHECKEQ(k, 1, "Reading File");
 
 	junk = (int*)malloc(sizeof(int) * vertices);
-
 	CHECKNEQ(junk, NULL, "malloc junk");
 
 	/* checking sum of ranks*/
@@ -38,21 +37,13 @@ spmat* spmat_setting(FILE *inputFile){
 		CHECKEQ(k, tmpRank, "Reading File");
 	}
 	/*Allocating the matrix */
-	printf("\nIn: spmat_setting. Calling spmat_allocate_array");
-
 	sp = spmat_allocate_array(vertices, ranks);
-
-	printf("\nIn: spmat_swtting. Finish allocating array");
-
 	/*now we read the matrix into spmat */
 	rewind(inputFile);
 	k = fread(junk, sizeof(int) , 1, inputFile);
 	CHECKEQ(k, 1, "Reading File");
 	tmpRow = (int*) malloc(vertices * sizeof(int));
 	CHECKNEQ(tmpRow, NULL, "Allocating");
-
-	printf("\nIn: spmat_setting. Adding all rows using add_row");
-
 	for (i = 0; i < vertices; i++){
 		k = fread(&tmpRank, sizeof(int) , 1, inputFile);
 		CHECKEQ(k, 1, "Reading File");
@@ -60,12 +51,11 @@ spmat* spmat_setting(FILE *inputFile){
 		CHECKEQ(k, tmpRank, "Reading File");
 		add_row(sp, tmpRow, i, tmpRank);
 	}
-	printf("\nIn: spmat_setting. Finish adding all rows");
 	free(tmpRow);
 	free(junk);
-	printf("\nIn:spmat_seeting. Calling getShift");
 	sp->shift = getShift(sp);
-	printf("\nIn: spmat_setting. Finish getShift, finish spmat_setting");
+
+	printf("\nIn: spmat_setting, complete");
 
 	return sp;
 }
@@ -75,6 +65,8 @@ subSpmat* extractSubMatrix(spmat *sp, group *g)
 	int len, i, j, subM, *colInd, tmpRnk, subTmpRnk, *subRnkPtr, *subColPtr, *indPtr;
 	subSpmat *subSp;
 	double *subValPtr;
+
+	printf("\nIn: extractSubMatrix, start");
 
 	len = g->len;
 	/* allocating the arrays */
@@ -137,6 +129,9 @@ subSpmat* extractSubMatrix(spmat *sp, group *g)
 	subSp->subValues = (double*)realloc(subSp->subValues, subM*sizeof(double));
 	CHECKNEQ(subSp->subValues, NULL, "allocating subSp->subValues");
 	subSp->subM = subM;
+
+	printf("\nIn: extractSubMatrix, complete");
+
 	return subSp;
 }
 
@@ -146,7 +141,8 @@ void add_row(spmat *A, const int *row, int i, int rank){
 	int const *index;
 	double *valueIndex;
 
-	printf("\nIn:add_row. adding row number %d", i);
+	printf("\nIn:add_row, start");
+	printf("\nIn:add_row, adding row number %d", i);
 
 	/*initalizing all variables */
 	j = 0;
@@ -158,7 +154,6 @@ void add_row(spmat *A, const int *row, int i, int rank){
 
 	valueIndex = &(A->values[A ->rowptr[i]]);
 	colIndex = &(A -> colind[A ->rowptr[i]]);
-
 	/*inserting all edges*/
 	while (j < rank){
 		*valueIndex = 1;
@@ -172,13 +167,13 @@ void add_row(spmat *A, const int *row, int i, int rank){
 	A->ranks[i] = rank;
 	A->rowptr[i+1] = (A->rowptr[i] + rank);
 
-	printf("\nIn:add_row. finish adding row number %d",i);
+	printf("\nIn:add_row, complete");
 }
 
 spmat* spmat_allocate_array(int n, int nnz){
 	spmat *sp;
 
-	printf("\nIn:spmat_allocate_array. starting allocation");
+	printf("\nIn:spmat_allocate_array. start");
 
 	sp = (spmat*) malloc(sizeof(spmat));
 	CHECKNEQ(sp, NULL, "Allocating");
@@ -196,7 +191,7 @@ spmat* spmat_allocate_array(int n, int nnz){
 	sp->ranks = (int*) malloc(n * sizeof(int));
 	CHECKNEQ(sp->ranks, NULL, "Allocating");
 
-	printf("\nIn: spmat_allocate_array. finish allocating");
+	printf("\nIn: spmat_allocate_array, complete");
 
 	return sp;
 }
@@ -205,7 +200,7 @@ double getShift(spmat *sp){
 	int i, j, rows, ranks, tmpRank, *rnkPtr, *colPtr, connected;
 	double tmp, max, result;
 
-	printf("\nIn:getShift. start the method");
+	printf("\nIn:getShift, start");
 
 	rows = sp->n;
 	ranks = sp->M;
@@ -229,17 +224,23 @@ double getShift(spmat *sp){
 		if (tmp >= max) max = tmp;
 	}
 
-	printf("\nIn:getShift. finish method. the shift is: %f", max);
+	printf("\nIn:getShift. the shift is: %f", max);
+	printf("\nIn:getShift, complete");
 	return max;
 }
 
 
 
 void arr_free(spmat *A){
+
+	printf("\nIn:arr_free, start");
+
 	free(A->colind);
 	free(A->rowptr);
 	free(A->values);
 	free(A);
+
+	printf("\nIn:arr_free, start");
 
 }
 

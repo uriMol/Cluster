@@ -4,7 +4,7 @@
  *  Created on: 5 Aug 2020
  *      Author: Omer
  */
-
+#include "group.h"
 #include <stdio.h>
 #ifndef _SPMAT_H
 #define _SPMAT_H
@@ -53,15 +53,6 @@ typedef struct _subSpmat {
 
 } subSpmat;
 
-
-
-typedef struct _group {
-	/*indexes: indices of the relevent vertices in the group*/
-	int *indexes;
-	/* len: length of g (Ng) */
-	int		len;
-
-} group;
 
 /* Creating the matrix, allocating and adding all values */
 spmat* spmat_setting(FILE *inputFile);

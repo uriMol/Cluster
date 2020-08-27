@@ -24,13 +24,12 @@ void printA(spmat *sp);
 void printB(spmat *sp);
 
 
-
 double* getRandVec(int n){
 	int i;
 	double *v;
 	srand(time(NULL));
 
-	printf("\nIn:getRandVec. starting to create random vector");
+	printf("\nIn:getRandVec, start");
 
 	v = (double*)malloc(n*sizeof(double));
 	CHECKNEQ(v, NULL, "allocating randVec v");
@@ -38,7 +37,8 @@ double* getRandVec(int n){
 		v[i] = rand();
 	}
 
-	printf("\nIn:getRandVec. finish creating the random vector");
+	printf("\nIn:getRandVec, complete");
+
 	return v;
 }
 
@@ -46,15 +46,12 @@ double* getEigenVec(subSpmat *subSp, double* f){
 	int n, smallDif;
 	double *eigenVec, *VBk, *aVec, *bVec, *cVec;
 
-	printf("\nIn:getEigenVec. starting the method");
+	printf("\nIn:getEigenVec, start");
+
 	n = subSp->n;
 	/*Initializing with random values*/
-
-	printf("\nIn:getEigenVec. calling getRandVec");
-
 	eigenVec = getRandVec(n);
 
-	printf("\nIn:getEigenVec. revieced a random vec");
 	VBk = (double*)malloc(n*sizeof(double));
 	CHECKNEQ(VBk, NULL, "malloc VBk");
 	aVec = (double*)malloc(n*sizeof(double));
@@ -64,10 +61,7 @@ double* getEigenVec(subSpmat *subSp, double* f){
 	cVec = (double*)malloc(n*sizeof(double));
 	CHECKNEQ(cVec, NULL, "malloc cVec");
 
-	printf("\nIn:getEigenVec. starting power iterations");
-
 	smallDif = 0;
-
 	while(smallDif != n){
 		getAVmult(eigenVec, subSp, aVec);
 		getRanksMult(eigenVec, subSp, bVec);
@@ -77,12 +71,13 @@ double* getEigenVec(subSpmat *subSp, double* f){
 		smallDif = updateEigen(VBk, eigenVec, n);
 	}
 
-	printf("\nIn:getEigenVec. finish with power iteration");
-
 	free(aVec);
 	free(bVec);
 	free(cVec);
 	free(VBk);
+
+	printf("\nIn:getEigenVec, complete");
+
 	return eigenVec;
 }
 
@@ -91,6 +86,8 @@ void getAVmult(const double *v, subSpmat *A, double *result){
 	/*initializing */
 	int i, j, *colIndex, *subRnkPtr, tmpRnk;
 	double *value, tmp_result, *resPtr;
+
+	printf("\nIn:getAVmult, start");
 
 	/*setting the variables*/
 	value = A->subValues;
@@ -111,11 +108,16 @@ void getAVmult(const double *v, subSpmat *A, double *result){
 		*resPtr = tmp_result;
 		resPtr++;
 	}
+
+	printf("\nIn:getAVmult, complete");
+
 }
 
 void getRanksMult(double *eigenVec, subSpmat *sp, double *result){
 	int n, i, j, *rnkPtr, *gPtr;
 	double *resPtr, *eigPtr, m, rnkConst;
+
+	printf("\nIn:getRanksMult, start");
 
 	m = sp->M;
 	n = sp->n;
@@ -135,11 +137,17 @@ void getRanksMult(double *eigenVec, subSpmat *sp, double *result){
 		resPtr++;
 		gPtr++;
 	}
+
+	printf("\nIn:getRanksMult, complete");
+
 }
 
 void getShiftandFMult(double *eigenVec, subSpmat *sp, double *f, double *result){
 	int n, i;
 	double *fPtr, c, *resPtr, *eigenPtr;
+
+	printf("\nIn:getShiftandFMult, start");
+
 	c = sp->shift;
 	n = sp->n;
 	fPtr = f;
@@ -151,10 +159,15 @@ void getShiftandFMult(double *eigenVec, subSpmat *sp, double *f, double *result)
 		eigenPtr++;
 		fPtr++;
 	}
+
+	printf("\nIn:getShiftandFMult, complete");
 }
 void sumAll(double *aVec, double *bVec, double *cVec, double *result, int n){
 	int i;
 	double *aPtr, *bPtr, *cPtr, *res;
+
+	printf("\nIn:sumAll, start");
+
 	aPtr = aVec;
 	bPtr = bVec;
 	cPtr = cVec;
@@ -166,12 +179,15 @@ void sumAll(double *aVec, double *bVec, double *cVec, double *result, int n){
 		bPtr++;
 		cPtr++;
 	}
+
+	printf("\nIn:sumAll, complete");
 }
 
 void normalize(double *vec, int n){
 	int i;
 	double sum, *vecPtr;
 
+	printf("\nIn:normalize, start");
 	sum = 0;
 	vecPtr = vec;
 	for(i = 0; i < n; i++){
@@ -185,11 +201,16 @@ void normalize(double *vec, int n){
 		*vecPtr /= sum;
 		vecPtr++;
 	}
+
+	printf("\nIn:normalize, complete");
 }
 
 int updateEigen(double *VBk, double *eigenVec, int n){
 	int i, cnt;
 	double *vecPtr, *eigPtr;
+
+	printf("\nIn:updateEigen, start");
+
 	vecPtr = VBk;
 	eigPtr = eigenVec;
 	cnt = 0;
@@ -202,6 +223,9 @@ int updateEigen(double *VBk, double *eigenVec, int n){
 		eigPtr++;
 		vecPtr++;
 	}
+
+	printf("\nIn:updateEigen, complete");
+
 	return cnt;
 }
 
@@ -209,7 +233,7 @@ double getEigenVal(double *eigenVec, subSpmat *sp, double *f){
 	int n;
 	double *aVec, *bVec, *cVec, *BVk, res;
 
-	printf("\nIn:getEigenVal. starting the method");
+	printf("\nIn:getEigenVal. start");
 
 	n = sp->n;
 
@@ -222,8 +246,6 @@ double getEigenVal(double *eigenVec, subSpmat *sp, double *f){
 	cVec = (double*)malloc(n*sizeof(double));
 	CHECKNEQ(cVec, NULL, "malloc cVec");
 
-	printf("\nIn:getEigenVal. calling all mult functions and sumAll");
-
 	getAVmult(eigenVec, sp, aVec);
 	getRanksMult(eigenVec, sp, bVec);
 	getShiftandFMult(eigenVec, sp, f, cVec);
@@ -235,12 +257,15 @@ double getEigenVal(double *eigenVec, subSpmat *sp, double *f){
 
 	res = ((vecDot(eigenVec, BVk, n) / vecDot(eigenVec, eigenVec, n)) - sp->shift);
 
-	printf("\nIn:getEigenVal. finish running, eigenVal is: %f", res);
+	printf("\nIn:getEigenVal. eigenVal is: %f", res);
 
 	free(aVec);
 	free(bVec);
 	free(cVec);
 	free(BVk);
+
+	printf("\nIn:updateEigen, start");
+
 	return res;
 
 }
@@ -248,6 +273,8 @@ double getEigenVal(double *eigenVec, subSpmat *sp, double *f){
 double vecDot(double *aVec, double *bVec, int n){
 	int i;
 	double sum, *aPtr, *bPtr;
+
+	printf("\nIn:vecDot, start");
 
 	sum = 0;
 	aPtr = aVec;
@@ -257,16 +284,39 @@ double vecDot(double *aVec, double *bVec, int n){
 		aPtr++;
 		bPtr++;
 	}
+
+	printf("\nIn:vecDot, complete");
+
 	return sum;
 }
 
 
+double* divByEigen(double* eigenVec, int n){
+	int i;
+	double *division, *divPtr, *eigPtr;
+
+	printf("\nIn:divByEigen, start");
+
+	division = (double*)malloc(n*sizeof(double));
+	divPtr = division;
+	eigPtr = eigenVec;
+	for (i = 0; i < n; i++){
+		(IS_POSITIVE(*eigPtr)) ? (*divPtr = 1) : (*divPtr = -1);
+		divPtr++;
+		eigPtr++;
+	}
+
+	printf("\nIn:divByEigen, complete");
+
+	return division;
+}
 
 void divG1G2(double* eigenVec, int n, group* g, group** g1, group** g2){
 	int i, g1len, g2len, *gPtr, *g1Ptr, *g2Ptr;
 	double *eigPtr;
 
-	printf("\nIn:divG1G2. starting the method");
+	printf("\nIn:divG1G2, start");
+
 	eigPtr = eigenVec;
 	g1len = 0;
 	g2len = 0;
@@ -299,14 +349,14 @@ void divG1G2(double* eigenVec, int n, group* g, group** g1, group** g2){
 	(*g1)->indexes = (int*) realloc((*g1)->indexes, sizeof(int)*g1len);
 	(*g2)->indexes = (int*) realloc((*g2)->indexes, sizeof(int)*g2len);
 
-	printf("\nIn:divByEigen. finished division of the graph");
+	printf("\nIn:divG1G2, complete");
 }
 
 double getModularity(subSpmat *subSp, double *division){
 	int n;
 	double *Bs, *aVec, *bVec, *cVec, res;
 
-	printf("\nIn:getModularity, starting the method");
+	printf("\nIn:getModularity, start");
 
 	n = subSp->n;
 	Bs = (double*)malloc(n*sizeof(double));
@@ -323,18 +373,23 @@ double getModularity(subSpmat *subSp, double *division){
 
 	res = vecDot(division, Bs, n);
 
-	printf("\nIn:getModularity. finished running, modularity is: %f", res);
+	printf("\nIn:getModularity. modularity is: %f", res);
 
 	free(aVec);
 	free(bVec);
 	free(cVec);
 	free(Bs);
+
+	printf("\nIn:getModularity, complete");
+
 	return res;
 }
 
 double* getF(spmat *sp, group *g){
 	int i, j, len, *indPtr, *colInd, tmpRnk, tmpValSum;
 	double *f, tmpRnkMult, M, rnkConst, *fPtr;
+
+	printf("\nIn:getF, start");
 
 	M = sp->M;
 
@@ -381,13 +436,52 @@ double* getF(spmat *sp, group *g){
 		*fPtr = tmpValSum - tmpRnkMult;
 		fPtr++;
 	}
+
+	printf("\nIn:getF, complete");
+
 	return f;
 }
+
+double* modMaximization(subSpmat *subSp,double *division, group *g){
+	int i, n, *indices, maxImproveIndex;
+	group *unmoved;
+	double deltaQ, QZero, *newDivision, *score, *improve;
+	printf("\nIn: modMaximization, start");
+
+	n = g->len;
+	modInitialize(&unmoved, n, division, &newDivision, &score, &indices, &improve);
+
+	do {
+		for (i = 0; i < n; i++)
+		{
+			QZero = getModularity(subSp, newDivision);
+			/* computing score vector */
+			computeScoreVector(score, subSp, newDivision, unmoved, QZero);
+			/* finding and moving max deltaQ vertex */
+			moveMaxVertex(score, unmoved, newDivision, indices, improve, i);
+		}
+		maxImproveIndex = findMaxImprove(improve, n);
+		shiftUntilI(newDivision, maxImproveIndex, n, indices);
+		if(maxImproveIndex == (n - 1))
+		{
+			deltaQ = 0;
+		}
+		else
+		{
+			deltaQ = improve[maxImproveIndex];
+		}
+	} while (IS_POSITIVE(deltaQ));
+	printf("\nIn: modMaximization, complete");
+	return newDivision;
+}
+
 void printA(spmat *sp){
 	int i, j, n, *colPtr;
 	double tmp, *valPtr;
 
+	printf("\nIn:printA, start");
 	printf("\n");
+
 	n = sp->n;
 	colPtr = sp->colind;
 	valPtr = sp->values;
@@ -403,12 +497,14 @@ void printA(spmat *sp){
 		}
 		printf("\n");
 	}
-
+	printf("\nIn:printA, complete");
 }
 
 void printB(spmat *sp){
 	int i, j, n, *colPtr, *ranks;
 	double tmp, c, *valPtr, m;
+
+	printf("\nIn:printB, start");
 
 	c = sp->shift;
 	n = sp->n;
@@ -431,28 +527,10 @@ void printB(spmat *sp){
 		}
 		printf("\n");
 	}
+
+	printf("\nIn:printA, complete");
 }
 
-double* divByEigen(double* eigenVec, int n){
-	int i;
-	double *division, *divPtr, *eigPtr;
-
-	printf("\nIn:divByEigen. starting the method");
-
-	division = (double*)malloc(n*sizeof(double));
-	divPtr = division;
-	eigPtr = eigenVec;
-	for (i = 0; i < n; i++){
-		(IS_POSITIVE(*eigPtr)) ? (*divPtr = 1) : (*divPtr = -1);
-		printf("i = %d, in group = %f\n", i + 1, *divPtr);
-		divPtr++;
-		eigPtr++;
-	}
-
-	printf("\nIn:divByEigen. finished division of the graph");
-
-	return division;
-}
 
 
 
