@@ -125,7 +125,7 @@ void divideG(spmat *sp, group *g, group **g1, group **g2){
 		return;
 	}
 
-	division = divByEigen(eigenVec, sp->n);
+	division = divByEigen(eigenVec, subSp->n);
 
 	Q = getModularity(subSp, division);
 
@@ -135,7 +135,7 @@ void divideG(spmat *sp, group *g, group **g1, group **g2){
 		return;
 	}
 
-	divG1G2(eigenVec, sp->n, g1, g2);
+	divG1G2(eigenVec, subSp->n, g, g1, g2);
 
 
 }

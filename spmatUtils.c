@@ -262,11 +262,11 @@ double vecDot(double *aVec, double *bVec, int n){
 
 
 
-void divG1G2(double* eigenVec, int n, group** g1, group** g2){
-	int i, g1len, g2len, *g1Ptr, *g2Ptr;
+void divG1G2(double* eigenVec, int n, group* g, group** g1, group** g2){
+	int i, g1len, g2len, *gPtr, *g1Ptr, *g2Ptr;
 	double *eigPtr;
 
-	printf("\nIn:divByEigen. starting the method");
+	printf("\nIn:divG1G2. starting the method");
 	eigPtr = eigenVec;
 	g1len = 0;
 	g2len = 0;
@@ -280,16 +280,18 @@ void divG1G2(double* eigenVec, int n, group** g1, group** g2){
 	CHECKNEQ((*g2)->indexes, NULL, "allocating g2->indexes in divByEigen");
 	g1Ptr = (*g1)->indexes;
 	g2Ptr = (*g2)->indexes;
+	gPtr = g->indexes;
 	for (i = 0; i < n; i++){
 		if(IS_POSITIVE(*eigPtr)){
-			*g1Ptr = i;
+			*g1Ptr = *gPtr;
 			g1len++;
 			g1Ptr++;
 		} else{
-			*g2Ptr = i;
+			*g2Ptr = *gPtr;
 			g2len++;
 			g2Ptr++;
 		}
+		gPtr++;
 		eigPtr++;
 	}
 	(*g1)->len = g1len;
@@ -300,13 +302,13 @@ void divG1G2(double* eigenVec, int n, group** g1, group** g2){
 	printf("\nIn:divByEigen. finished division of the graph");
 }
 
-double getModularity(subSpmat *sp, double *division){
+double getModularity(subSpmat *subSp, double *division){
 	int n;
 	double *Bs, *aVec, *bVec, *cVec, res;
 
 	printf("\nIn:getModularity, starting the method");
 
-	n = sp->n;
+	n = subSp->n;
 	Bs = (double*)malloc(n*sizeof(double));
 	CHECKNEQ(Bs, NULL, "malloc Bs");
 	aVec = (double*)malloc(n*sizeof(double));
@@ -315,8 +317,8 @@ double getModularity(subSpmat *sp, double *division){
 	CHECKNEQ(bVec, NULL, "malloc bVec");
 	cVec = (double*)calloc(n, sizeof(double));
 	CHECKNEQ(cVec, NULL, "malloc cVec");
-	getAVmult(division, sp, aVec);
-	getRanksMult(division, sp, bVec);
+	getAVmult(division, subSp, aVec);
+	getRanksMult(division, subSp, bVec);
 	sumAll(aVec, bVec, cVec, Bs, n);
 
 	res = vecDot(division, Bs, n);
