@@ -18,7 +18,7 @@ typedef struct _spmat {
 	 * colind - keeping the column indices of the non-zero's values
 	 * rowptr - keeping for each row where its first non-zero value is from the values array
 	 */
-	double *values;
+	int *values;
 	int *colind;
 	int *rowptr;
 	int *ranks;
@@ -37,7 +37,7 @@ typedef struct _subSpmat {
 	 * colind - keeping the column indices of the non-zero's values
 	 * rowptr - keeping for each row where its first non-zero value is from the values array
 	 */
-	double *subValues;
+	int *subValues;
 	int *subColind;
 	int *subRanks;
 	int *origRanks;

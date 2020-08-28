@@ -83,8 +83,8 @@ double* getEigenVec(subSpmat *subSp, double* f){
 
 void getAVmult(const double *v, subSpmat *A, double *result){
 	/*initializing */
-	int i, j, *colIndex, *subRnkPtr, tmpRnk;
-	double *value, tmp_result, *resPtr;
+	int i, j, *colIndex, *subRnkPtr, tmpRnk, *value;
+	double tmp_result, *resPtr;
 
 	/*setting the variables*/
 	value = A->subValues;
@@ -424,8 +424,7 @@ double* getF(spmat *sp, group *g){
 }
 
 void printA(spmat *sp){
-	int i, j, n, *colPtr;
-	double tmp, *valPtr;
+	int i, j, n, *colPtr, *valPtr, tmp;
 
 	printf("\nIn:printA, start");
 	printf("\n");
@@ -441,7 +440,7 @@ void printA(spmat *sp){
 				colPtr++;
 				valPtr++;
 			}
-			printf("%f, ", tmp);
+			printf("%d, ", tmp);
 		}
 		printf("\n");
 	}
@@ -449,8 +448,8 @@ void printA(spmat *sp){
 }
 
 void printB(spmat *sp){
-	int i, j, n, *colPtr, *ranks;
-	double tmp, c, *valPtr, m;
+	int i, j, n, *colPtr, *ranks, *valPtr;
+	double c,  m, tmp;
 
 	printf("\nIn:printB, start");
 

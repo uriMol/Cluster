@@ -62,9 +62,8 @@ spmat* spmat_setting(FILE *inputFile){
 
 subSpmat* extractSubMatrix(spmat *sp, group *g)
 {
-	int len, i, j, subM, *colInd, tmpRnk, subTmpRnk, *subRnkPtr, *subColPtr, *indPtr;
+	int len, i, j, subM, *colInd, tmpRnk, subTmpRnk, *subRnkPtr, *subColPtr, *indPtr, *subValPtr;
 	subSpmat *subSp;
-	double *subValPtr;
 
 	printf("\nIn: extractSubMatrix, start");
 
@@ -76,7 +75,7 @@ subSpmat* extractSubMatrix(spmat *sp, group *g)
 	CHECKNEQ(subSp->subRanks, NULL, "allocating subSp->subRanks");
 	subRnkPtr = subSp->subRanks;
 	subSp->M = sp->M;
-	subSp->subValues = (double*) malloc(sizeof(double) * sp->M);
+	subSp->subValues = (int*) malloc(sizeof(int) * sp->M);
 	CHECKNEQ(subSp->subValues, NULL, "allocating subSp->subValues");
 	subValPtr = subSp->subValues;
 	subSp->origRanks = sp->ranks;
@@ -126,7 +125,7 @@ subSpmat* extractSubMatrix(spmat *sp, group *g)
 	}
 	subSp->subColind = (int*)realloc(subSp->subColind, subM*sizeof(int));
 	CHECKNEQ(subSp->subColind, NULL, "allocating subSp->subColind");
-	subSp->subValues = (double*)realloc(subSp->subValues, subM*sizeof(double));
+	subSp->subValues = (int*)realloc(subSp->subValues, subM*sizeof(int));
 	CHECKNEQ(subSp->subValues, NULL, "allocating subSp->subValues");
 	subSp->subM = subM;
 
@@ -137,9 +136,8 @@ subSpmat* extractSubMatrix(spmat *sp, group *g)
 
 void add_row(spmat *A, const int *row, int i, int rank){
 	/* declaring all variables */
-	int j, *colIndex;
+	int j, *colIndex, *valueIndex;
 	int const *index;
-	double *valueIndex;
 
 	printf("\nIn:add_row, start");
 	printf("\nIn:add_row, adding row number %d", i);
@@ -182,7 +180,7 @@ spmat* spmat_allocate_array(int n, int nnz){
 	sp->M = nnz;
 
 	/* now defining the private field - using array_helper to keep all non-zero values */
-	sp->values = (double*) malloc(nnz * sizeof(double));
+	sp->values = (int*) malloc(nnz * sizeof(int));
 	CHECKNEQ(sp->values, NULL, "Allocating");
 	sp->colind = (int*) malloc(nnz * sizeof(int));
 	CHECKNEQ(sp->colind, NULL, "Allocating");
