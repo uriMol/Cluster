@@ -34,6 +34,7 @@ int main(int argc, char* argv[]){
 
 	/* allocating the array, setting it up with all values */
 	sp = spmat_setting(inputFile);
+	printA(sp);
 
 	if(sp->M == 0){
 		printf("\nIn:main, checking sp->M == 0 getEigenVec");

@@ -20,8 +20,7 @@ void sumAll(double *aVec, double *bVec, double *cVec, double *result, int n);
 void normalize(double *vec, int n);
 double vecDot(double *aVec, double *bVec, int n);
 int updateEigen(double *VBk, double *eigenVec, int n);
-void printA(spmat *sp);
-void printB(spmat *sp);
+
 
 
 double* getRandVec(int n){

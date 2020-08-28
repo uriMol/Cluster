@@ -25,4 +25,8 @@ double getModularity(subSpmat *subSp, double *division);
 
 double* getF(spmat *sp, group *g);
 
+void printA(spmat *sp);
+
+void printB(spmat *sp);
+
 #endif /* SPMATUTILS_H_ */
