@@ -17,5 +17,4 @@ typedef struct _group {
 void removeMaxIndex(group *g, int i);
 
 
-
 #endif /* GROUP_H_ */

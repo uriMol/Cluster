@@ -18,12 +18,13 @@
 #include "SPBufferset.h"
 
 void divideG(spmat *sp, group *g, group **g1, group **g2);
+void exportData(FILE *outputFile, list *O);
 
 int main(int argc, char* argv[]){
 	list *P, *O;
 	group *g, *g1, *g2;
 	spmat *sp;
-	FILE *inputFile;
+	FILE *inputFile, *outputFile;
 
 	/*SP_BUFF_SET();*/
 	printf("\nIn: main, start");
@@ -81,6 +82,8 @@ int main(int argc, char* argv[]){
 		printf("\n");
 		printO(O);
 	}
+	outputFile = fopen(argv[2], "w");
+	exportData(outputFile, O);
 	/*TODO return s - the division*/
 	CHECKEQ (argc, argc, "argc");
 
@@ -117,7 +120,27 @@ void divideG(spmat *sp, group *g, group **g1, group **g2){
 	divG1G2(eigenVec, subSp->n, g, g1, g2);
 
 	printf("\nIn:divideG, complete");
+}
 
+void exportData(FILE *outputFile, list *O)
+{
+	int numOfGroups, junk, tmpLen;
+	list *OPtr;
+
+	numOfGroups = countO(O);
+	printf("numOfGroups is: %d", numOfGroups);
+	OPtr = O;
+	junk = fwrite(&numOfGroups, sizeof(int), 1, outputFile);
+	CHECKEQ(junk, 1, "writing numOfGroups");
+	while(OPtr->g != NULL)
+	{
+		tmpLen = OPtr->g->len;
+		junk = fwrite(&tmpLen, sizeof(int), 1, outputFile);
+		CHECKEQ(junk, 1, "writing groupSize");
+		junk = fwrite(OPtr->g->indexes, sizeof(int), tmpLen, outputFile);
+		CHECKEQ(junk, tmpLen, "writing indexes");
+		OPtr = OPtr->next;
+	}
 }
 
 

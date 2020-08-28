@@ -26,6 +26,7 @@ list* createP(int n);
 list* createO();
 list* listAdd(list *L, group *g);
 void printO(list* O);
+int countO(list *O);
 
 
 

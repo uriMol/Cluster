@@ -52,6 +52,22 @@ list* listAdd(list *L, group *g){
 
 }
 
+int countO(list *O)
+{
+	int cnt;
+	list *tmp;
+
+	tmp = O;
+	cnt = 0;
+
+	while (tmp->g != NULL)
+	{
+		cnt++;
+		tmp = tmp->next;
+	}
+	return cnt;
+}
+
 
 void printO(list* O){
 	int i;
