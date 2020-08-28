@@ -25,6 +25,4 @@ double getModularity(subSpmat *subSp, double *division);
 
 double* getF(spmat *sp, group *g);
 
-double* modMaximization(subSpmat *subSp,double *division,group *g);
-
 #endif /* SPMATUTILS_H_ */

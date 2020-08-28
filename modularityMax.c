@@ -11,6 +11,39 @@
 #include <time.h>
 #include <math.h>
 
+double* modMaximization(subSpmat *subSp,double *division, group *g){
+	int i, n, *indices, maxImproveIndex;
+	group *unmoved;
+	double deltaQ, QZero, *newDivision, *score, *improve;
+	printf("\nIn: modMaximization, start");
+
+	n = g->len;
+	modInitialize(&unmoved, n, division, &newDivision, &score, &indices, &improve);
+
+	do {
+		for (i = 0; i < n; i++)
+		{
+			QZero = getModularity(subSp, newDivision);
+			/* computing score vector */
+			computeScoreVector(score, subSp, newDivision, unmoved, QZero);
+			/* finding and moving max deltaQ vertex */
+			moveMaxVertex(score, unmoved, newDivision, indices, improve, i);
+		}
+		maxImproveIndex = findMaxImprove(improve, n);
+		shiftUntilI(newDivision, maxImproveIndex, n, indices);
+		if(maxImproveIndex == (n - 1))
+		{
+			deltaQ = 0;
+		}
+		else
+		{
+			deltaQ = improve[maxImproveIndex];
+		}
+	} while (IS_POSITIVE(deltaQ));
+	printf("\nIn: modMaximization, complete");
+	return newDivision;
+}
+
 void modInitialize(group **unmoved, int len, double *divOrig, double **divNew, double **score, int **indices, double **improve)
 {
 	int i, *indPtr;
@@ -44,7 +77,7 @@ void modInitialize(group **unmoved, int len, double *divOrig, double **divNew, d
 		indPtr++;
 	}
 
-	printf("\nIn: initialize, start");
+	printf("\nIn: initialize, complete");
 }
 
 void computeScoreVector(double *score, subSpmat *subSp, double* newDiv, group *unmoved, double QZero)
@@ -72,7 +105,7 @@ void computeScoreVector(double *score, subSpmat *subSp, double* newDiv, group *u
 void moveMaxVertex(double *score, group *unmoved, double *newDiv, int *indices, double *improve, int i)
 {
 	double *scorePtr, max;
-	int maxIndex, j, *indicesPtr, *unmovedPtr;
+	int maxIndex, j, *unmovedPtr;
 
 	printf("\nIn: moveMaxVertex, start");
 
@@ -80,7 +113,6 @@ void moveMaxVertex(double *score, group *unmoved, double *newDiv, int *indices, 
 	max = *scorePtr;
 	maxIndex = 0;
 	unmovedPtr = unmoved->indexes;
-	indicesPtr = indices;
 
 	for (j = 0; j < unmoved->len; j++)
 	{
@@ -93,8 +125,7 @@ void moveMaxVertex(double *score, group *unmoved, double *newDiv, int *indices, 
 		unmovedPtr++;
 	}
 	newDiv[unmoved->indexes[maxIndex]] *= -1;
-	*indicesPtr = unmoved->indexes[maxIndex];
-	indicesPtr++;
+	indices[i] = unmoved->indexes[maxIndex];
 
 	if( i == 0)
 	{
@@ -106,7 +137,6 @@ void moveMaxVertex(double *score, group *unmoved, double *newDiv, int *indices, 
 	}
 	removeMaxIndex(unmoved, maxIndex);
 
-	printf("\nIn: moveMaxVertex, complete");
 }
 
 int findMaxImprove(double *improve, int n)

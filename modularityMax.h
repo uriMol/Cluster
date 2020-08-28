@@ -5,6 +5,7 @@
  *      Author: Omer
  */
 #include "group.h"
+#include "spmat.h"
 #ifndef MODULARITYMAX_H_
 #define MODULARITYMAX_H_
 
@@ -13,4 +14,5 @@ void computeScoreVector(double *score, subSpmat *subSp, double* newDiv, group *u
 void moveMaxVertex(double *score, group *unmoved, double *newDiv, int *indices, double *improve, int i);
 void shiftUntilI(double *newDiv, int i, int n, int *indices);
 int findMaxImprove(double *improve, int n);
+double* modMaximization(subSpmat *subSp,double *division, group *g);
 #endif /* MODULARITYMAX_H_ */

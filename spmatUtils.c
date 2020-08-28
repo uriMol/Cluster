@@ -87,8 +87,6 @@ void getAVmult(const double *v, subSpmat *A, double *result){
 	int i, j, *colIndex, *subRnkPtr, tmpRnk;
 	double *value, tmp_result, *resPtr;
 
-	printf("\nIn:getAVmult, start");
-
 	/*setting the variables*/
 	value = A->subValues;
 	colIndex = A->subColind;
@@ -109,15 +107,12 @@ void getAVmult(const double *v, subSpmat *A, double *result){
 		resPtr++;
 	}
 
-	printf("\nIn:getAVmult, complete");
 
 }
 
 void getRanksMult(double *eigenVec, subSpmat *sp, double *result){
 	int n, i, j, *rnkPtr, *gPtr;
 	double *resPtr, *eigPtr, m, rnkConst;
-
-	printf("\nIn:getRanksMult, start");
 
 	m = sp->M;
 	n = sp->n;
@@ -138,15 +133,12 @@ void getRanksMult(double *eigenVec, subSpmat *sp, double *result){
 		gPtr++;
 	}
 
-	printf("\nIn:getRanksMult, complete");
 
 }
 
 void getShiftandFMult(double *eigenVec, subSpmat *sp, double *f, double *result){
 	int n, i;
 	double *fPtr, c, *resPtr, *eigenPtr;
-
-	printf("\nIn:getShiftandFMult, start");
 
 	c = sp->shift;
 	n = sp->n;
@@ -160,13 +152,10 @@ void getShiftandFMult(double *eigenVec, subSpmat *sp, double *f, double *result)
 		fPtr++;
 	}
 
-	printf("\nIn:getShiftandFMult, complete");
 }
 void sumAll(double *aVec, double *bVec, double *cVec, double *result, int n){
 	int i;
 	double *aPtr, *bPtr, *cPtr, *res;
-
-	printf("\nIn:sumAll, start");
 
 	aPtr = aVec;
 	bPtr = bVec;
@@ -180,14 +169,12 @@ void sumAll(double *aVec, double *bVec, double *cVec, double *result, int n){
 		cPtr++;
 	}
 
-	printf("\nIn:sumAll, complete");
 }
 
 void normalize(double *vec, int n){
 	int i;
 	double sum, *vecPtr;
 
-	printf("\nIn:normalize, start");
 	sum = 0;
 	vecPtr = vec;
 	for(i = 0; i < n; i++){
@@ -202,14 +189,11 @@ void normalize(double *vec, int n){
 		vecPtr++;
 	}
 
-	printf("\nIn:normalize, complete");
 }
 
 int updateEigen(double *VBk, double *eigenVec, int n){
 	int i, cnt;
 	double *vecPtr, *eigPtr;
-
-	printf("\nIn:updateEigen, start");
 
 	vecPtr = VBk;
 	eigPtr = eigenVec;
@@ -223,8 +207,6 @@ int updateEigen(double *VBk, double *eigenVec, int n){
 		eigPtr++;
 		vecPtr++;
 	}
-
-	printf("\nIn:updateEigen, complete");
 
 	return cnt;
 }
@@ -440,39 +422,6 @@ double* getF(spmat *sp, group *g){
 	printf("\nIn:getF, complete");
 
 	return f;
-}
-
-double* modMaximization(subSpmat *subSp,double *division, group *g){
-	int i, n, *indices, maxImproveIndex;
-	group *unmoved;
-	double deltaQ, QZero, *newDivision, *score, *improve;
-	printf("\nIn: modMaximization, start");
-
-	n = g->len;
-	modInitialize(&unmoved, n, division, &newDivision, &score, &indices, &improve);
-
-	do {
-		for (i = 0; i < n; i++)
-		{
-			QZero = getModularity(subSp, newDivision);
-			/* computing score vector */
-			computeScoreVector(score, subSp, newDivision, unmoved, QZero);
-			/* finding and moving max deltaQ vertex */
-			moveMaxVertex(score, unmoved, newDivision, indices, improve, i);
-		}
-		maxImproveIndex = findMaxImprove(improve, n);
-		shiftUntilI(newDivision, maxImproveIndex, n, indices);
-		if(maxImproveIndex == (n - 1))
-		{
-			deltaQ = 0;
-		}
-		else
-		{
-			deltaQ = improve[maxImproveIndex];
-		}
-	} while (IS_POSITIVE(deltaQ));
-	printf("\nIn: modMaximization, complete");
-	return newDivision;
 }
 
 void printA(spmat *sp){
