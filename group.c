@@ -9,10 +9,7 @@
 #include <stdlib.h>
 void removeMaxIndex(group *g, int i)
 {
-	printf("\nIn: removeMaxIndex, start");
-
 	g->indexes[i] = g->indexes[g->len - 1];
 	g->len--;
 
-	printf("\nIn: removeMaxIndex, complete");
 }

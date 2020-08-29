@@ -17,7 +17,6 @@ double* modMaximization(subSpmat *subSp,double *division, group *g){
 	int i, n, *indices, maxImproveIndex;
 	group *unmoved;
 	double deltaQ, QZero, *newDivision, *score, *improve;
-	printf("\nIn: modMaximization, start");
 
 	n = g->len;
 	modInitialize(&unmoved, n, division, &newDivision, &score, &indices, &improve);
@@ -43,7 +42,6 @@ double* modMaximization(subSpmat *subSp,double *division, group *g){
 			deltaQ = improve[maxImproveIndex];
 		}
 	} while (IS_POSITIVE(deltaQ));
-	printf("\nIn: modMaximization, complete");
 	return newDivision;
 }
 
@@ -52,7 +50,6 @@ void modInitialize(group **unmoved, int len, double *divOrig, double **divNew, d
 	int i, *indPtr;
 	double *newDivPtr, *divPtr;
 
-	printf("\nIn: initialize, start");
 
 	*unmoved = (group*) malloc(sizeof(group));
 	CHECKNEQ(*unmoved, NULL, "allocating unmoved");
@@ -80,14 +77,11 @@ void modInitialize(group **unmoved, int len, double *divOrig, double **divNew, d
 		indPtr++;
 	}
 
-	printf("\nIn: initialize, complete");
 }
 
 void reinitializeUnmoved(group *unmoved, int len)
 {
 	int i, *indPtr;
-
-	printf("\nIn: reinitializeUnmoved, start");
 
 	indPtr = unmoved->indexes;
 	unmoved->len = len;
@@ -96,8 +90,6 @@ void reinitializeUnmoved(group *unmoved, int len)
 		*indPtr = i;
 		indPtr++;
 	}
-
-	printf("\nIn: reinitializeUnmoved, complete");
 }
 
 
@@ -105,8 +97,6 @@ void computeScoreVector(double *score, subSpmat *subSp, double* newDiv, group *u
 {
 	int j, *unmovedPtr;
 	double *scorePtr;
-
-	printf("\nIn: computeScoreVector, start");
 
 	scorePtr = score;
 	unmovedPtr = unmoved->indexes;
@@ -120,15 +110,12 @@ void computeScoreVector(double *score, subSpmat *subSp, double* newDiv, group *u
 		scorePtr++;
 	}
 
-	printf("\nIn: computeScoreVector, complete");
 }
 
 void moveMaxVertex(double *score, group *unmoved, double *newDiv, int *indices, double *improve, int i)
 {
 	double *scorePtr, max;
 	int maxIndex, j, *unmovedPtr;
-
-	printf("\nIn: moveMaxVertex, start");
 
 	scorePtr = score;
 	max = *scorePtr;
@@ -165,7 +152,6 @@ int findMaxImprove(double *improve, int n)
 	double *improvePtr, max;
 	int i, maxIndex;
 
-	printf("\nIn: findMaxImprove, start");
 
 	improvePtr = improve;
 	max = *improvePtr;
@@ -180,7 +166,6 @@ int findMaxImprove(double *improve, int n)
 		improvePtr++;
 	}
 
-	printf("\nIn: findMaxImprove, complete");
 
 	return maxIndex;
 }
@@ -189,14 +174,11 @@ void shiftUntilI(double *newDiv, int i, int n, int *indices)
 {
 	int k;
 
-	printf("\nIn: shiftUntilI, start");
-
 	for(k = n - 1; k > i; k--)
 	{
 		newDiv[indices[k]] *= -1;
 	}
 
-	printf("\nIn: shiftUntilI, complete");
 }
 
 

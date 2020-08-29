@@ -28,7 +28,6 @@ double* getRandVec(int n){
 	double *v;
 	srand(time(NULL));
 
-	printf("\nIn:getRandVec, start");
 
 	v = (double*)malloc(n*sizeof(double));
 	CHECKNEQ(v, NULL, "allocating randVec v");
@@ -36,7 +35,6 @@ double* getRandVec(int n){
 		v[i] = rand();
 	}
 
-	printf("\nIn:getRandVec, complete");
 
 	return v;
 }
@@ -45,7 +43,6 @@ double* getEigenVec(subSpmat *subSp, double* f){
 	int n, smallDif;
 	double *eigenVec, *VBk, *aVec, *bVec, *cVec;
 
-	printf("\nIn:getEigenVec, start");
 
 	n = subSp->n;
 	/*Initializing with random values*/
@@ -75,7 +72,6 @@ double* getEigenVec(subSpmat *subSp, double* f){
 	free(cVec);
 	free(VBk);
 
-	printf("\nIn:getEigenVec, complete");
 
 	return eigenVec;
 }
@@ -214,8 +210,6 @@ double getEigenVal(double *eigenVec, subSpmat *sp, double *f){
 	int n;
 	double *aVec, *bVec, *cVec, *BVk, res;
 
-	printf("\nIn:getEigenVal. start");
-
 	n = sp->n;
 
 	BVk = (double*)malloc(n*sizeof(double));
@@ -238,14 +232,12 @@ double getEigenVal(double *eigenVec, subSpmat *sp, double *f){
 
 	res = ((vecDot(eigenVec, BVk, n) / vecDot(eigenVec, eigenVec, n)) - sp->shift);
 
-	printf("\nIn:getEigenVal. eigenVal is: %f", res);
 
 	free(aVec);
 	free(bVec);
 	free(cVec);
 	free(BVk);
 
-	printf("\nIn:updateEigen, start");
 
 	return res;
 
@@ -254,8 +246,6 @@ double getEigenVal(double *eigenVec, subSpmat *sp, double *f){
 double vecDot(double *aVec, double *bVec, int n){
 	int i;
 	double sum, *aPtr, *bPtr;
-
-	printf("\nIn:vecDot, start");
 
 	sum = 0;
 	aPtr = aVec;
@@ -266,7 +256,6 @@ double vecDot(double *aVec, double *bVec, int n){
 		bPtr++;
 	}
 
-	printf("\nIn:vecDot, complete");
 
 	return sum;
 }
@@ -276,7 +265,6 @@ double* divByEigen(double* eigenVec, int n){
 	int i;
 	double *division, *divPtr, *eigPtr;
 
-	printf("\nIn:divByEigen, start");
 
 	division = (double*)malloc(n*sizeof(double));
 	divPtr = division;
@@ -287,7 +275,6 @@ double* divByEigen(double* eigenVec, int n){
 		eigPtr++;
 	}
 
-	printf("\nIn:divByEigen, complete");
 
 	return division;
 }
@@ -296,7 +283,6 @@ void divG1G2(double* eigenVec, int n, group* g, group** g1, group** g2){
 	int i, g1len, g2len, *gPtr, *g1Ptr, *g2Ptr;
 	double *eigPtr;
 
-	printf("\nIn:divG1G2, start");
 
 	eigPtr = eigenVec;
 	g1len = 0;
@@ -330,14 +316,11 @@ void divG1G2(double* eigenVec, int n, group* g, group** g1, group** g2){
 	(*g1)->indexes = (int*) realloc((*g1)->indexes, sizeof(int)*g1len);
 	(*g2)->indexes = (int*) realloc((*g2)->indexes, sizeof(int)*g2len);
 
-	printf("\nIn:divG1G2, complete");
 }
 
 double getModularity(subSpmat *subSp, double *division){
 	int n;
 	double *Bs, *aVec, *bVec, *cVec, res;
-
-	printf("\nIn:getModularity, start");
 
 	n = subSp->n;
 	Bs = (double*)malloc(n*sizeof(double));
@@ -354,14 +337,12 @@ double getModularity(subSpmat *subSp, double *division){
 
 	res = vecDot(division, Bs, n);
 
-	printf("\nIn:getModularity. modularity is: %f", res);
 
 	free(aVec);
 	free(bVec);
 	free(cVec);
 	free(Bs);
 
-	printf("\nIn:getModularity, complete");
 
 	return res;
 }
@@ -370,7 +351,6 @@ double* getF(spmat *sp, group *g){
 	int i, j, len, *indPtr, *colInd, tmpRnk, tmpValSum;
 	double *f, tmpRnkMult, M, rnkConst, *fPtr;
 
-	printf("\nIn:getF, start");
 
 	M = sp->M;
 
@@ -417,8 +397,6 @@ double* getF(spmat *sp, group *g){
 		*fPtr = tmpValSum - tmpRnkMult;
 		fPtr++;
 	}
-
-	printf("\nIn:getF, complete");
 
 	return f;
 }

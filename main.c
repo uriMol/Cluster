@@ -36,7 +36,6 @@ int main(int argc, char* argv[]){
 
 	/* allocating the array, setting it up with all values */
 	sp = spmat_setting(inputFile);
-	printA(sp);
 
 	if(sp->M == 0){
 		printf("\nIn:main, checking sp->M == 0 getEigenVec");
@@ -86,7 +85,7 @@ int main(int argc, char* argv[]){
 	exportData(outputFile, O);
 	fclose(outputFile);
 
-	printOutput(fopen(argv[2], "r"));
+	/* printOutput(fopen(argv[2], "r")); */
 	/*TODO return s - the division*/
 	CHECKEQ (argc, argc, "argc");
 	printf("\nIn: main, complete");
@@ -96,8 +95,6 @@ int main(int argc, char* argv[]){
 void divideG(spmat *sp, group *g, group **g1, group **g2){
 	subSpmat *subSp;
 	double *eigenVec, eigenVal, *division, Q, *f;
-
-	printf("\nIn:divideG, start");
 
 	subSp = extractSubMatrix(sp, g);
 	f = getF(sp, g);
@@ -121,7 +118,6 @@ void divideG(spmat *sp, group *g, group **g1, group **g2){
 
 	divG1G2(eigenVec, subSp->n, g, g1, g2);
 
-	printf("\nIn:divideG, complete");
 }
 
 void exportData(FILE *outputFile, list *O)
@@ -130,7 +126,6 @@ void exportData(FILE *outputFile, list *O)
 	list *OPtr;
 
 	numOfGroups = countO(O);
-	printf("numOfGroups is: %d", numOfGroups);
 	OPtr = O;
 	junk = fwrite(&numOfGroups, sizeof(int), 1, outputFile);
 	CHECKEQ(junk, 1, "writing numOfGroups");
