@@ -11,6 +11,8 @@
 #include <time.h>
 #include <math.h>
 
+void reinitializeUnmoved(group *unmoved, int len);
+
 double* modMaximization(subSpmat *subSp,double *division, group *g){
 	int i, n, *indices, maxImproveIndex;
 	group *unmoved;
@@ -21,6 +23,7 @@ double* modMaximization(subSpmat *subSp,double *division, group *g){
 	modInitialize(&unmoved, n, division, &newDivision, &score, &indices, &improve);
 
 	do {
+		reinitializeUnmoved(unmoved, n);
 		for (i = 0; i < n; i++)
 		{
 			QZero = getModularity(subSp, newDivision);
@@ -79,6 +82,24 @@ void modInitialize(group **unmoved, int len, double *divOrig, double **divNew, d
 
 	printf("\nIn: initialize, complete");
 }
+
+void reinitializeUnmoved(group *unmoved, int len)
+{
+	int i, *indPtr;
+
+	printf("\nIn: reinitializeUnmoved, start");
+
+	indPtr = unmoved->indexes;
+	unmoved->len = len;
+	for (i = 0; i < len; i++)
+	{
+		*indPtr = i;
+		indPtr++;
+	}
+
+	printf("\nIn: reinitializeUnmoved, complete");
+}
+
 
 void computeScoreVector(double *score, subSpmat *subSp, double* newDiv, group *unmoved, double QZero)
 {

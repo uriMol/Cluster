@@ -16,6 +16,7 @@
 #include "list.h"
 #include <string.h>
 #include "SPBufferset.h"
+#include "mainUtils.h"
 
 void divideG(spmat *sp, group *g, group **g1, group **g2);
 void exportData(FILE *outputFile, list *O);
@@ -80,13 +81,14 @@ int main(int argc, char* argv[]){
 			}
 		}
 		printf("\n");
-		printO(O);
 	}
 	outputFile = fopen(argv[2], "w");
 	exportData(outputFile, O);
+	fclose(outputFile);
+
+	printOutput(fopen(argv[2], "r"));
 	/*TODO return s - the division*/
 	CHECKEQ (argc, argc, "argc");
-
 	printf("\nIn: main, complete");
 	return 0;
 }
