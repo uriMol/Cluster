@@ -3,8 +3,10 @@ LIBS = -lm
 
 all: main 
 
-main: spmat.o spmatUtils.o list.o main.o group.o modularityMax.o
-	gcc main.o spmat.o spmatUtils.o list.o group.o modularityMax.o -o prog $(LIBS)
+main: spmat.o spmatUtils.o list.o main.o group.o modularityMax.o mainUtils.o
+	gcc main.o spmat.o spmatUtils.o list.o group.o modularityMax.o mainUtils.o -o prog $(LIBS)
+mainUtils.o: mainUtils.c
+	gcc $(FLAGS) -c mainUtils.c
 list.o:	list.c
 	gcc $(FLAGS) -c list.c
 spmatUtils.o:	spmatUtils.c
