@@ -81,7 +81,6 @@ int main(int argc, char* argv[]){
 				P = listAdd(P, g2);
 			}
 		}
-		printf("\n");
 	}
 	outputFile = fopen(argv[2], "w");
 	exportData(outputFile, O);
