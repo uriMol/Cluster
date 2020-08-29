@@ -13,15 +13,15 @@
 
 
 
-double* getEigenVec(subSpmat *subSp, double *f);
+double* getEigenVec(subSpmat *subSp, double *f, double *aVec, double *bVec, double *cVec, double *BVk);
 
 void divG1G2(double* eigenVec, int n, group* g, group** g1, group** g2);
 
 double* divByEigen(double* eigenVec, int n);
 
-double getEigenVal(double *eigenVec, subSpmat *sp, double *f);
+double getEigenVal(double *eigenVec, subSpmat *sp, double *f, double *aVec, double *bVec, double *cVec, double *BVk);
 
-double getModularity(subSpmat *subSp, double *division);
+double getModularity(subSpmat *subSp, double *division, double *aVec, double *bVec, double *cVec, double *Bs);
 
 double* getF(spmat *sp, group *g);
 

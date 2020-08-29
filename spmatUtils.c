@@ -39,23 +39,14 @@ double* getRandVec(int n){
 	return v;
 }
 
-double* getEigenVec(subSpmat *subSp, double* f){
+double* getEigenVec(subSpmat *subSp, double* f, double *aVec, double *bVec, double *cVec, double *VBk){
 	int n, smallDif;
-	double *eigenVec, *VBk, *aVec, *bVec, *cVec;
+	double *eigenVec;
 
 
 	n = subSp->n;
 	/*Initializing with random values*/
 	eigenVec = getRandVec(n);
-
-	VBk = (double*)malloc(n*sizeof(double));
-	CHECKNEQ(VBk, NULL, "malloc VBk");
-	aVec = (double*)malloc(n*sizeof(double));
-	CHECKNEQ(aVec, NULL, "malloc aVec");
-	bVec = (double*)malloc(n*sizeof(double));
-	CHECKNEQ(bVec, NULL, "malloc bVec");
-	cVec = (double*)malloc(n*sizeof(double));
-	CHECKNEQ(cVec, NULL, "malloc cVec");
 
 	smallDif = 0;
 	while(smallDif != n){
@@ -66,12 +57,6 @@ double* getEigenVec(subSpmat *subSp, double* f){
 		normalize(VBk, n);
 		smallDif = updateEigen(VBk, eigenVec, n);
 	}
-
-	free(aVec);
-	free(bVec);
-	free(cVec);
-	free(VBk);
-
 
 	return eigenVec;
 }
@@ -206,20 +191,12 @@ int updateEigen(double *VBk, double *eigenVec, int n){
 	return cnt;
 }
 
-double getEigenVal(double *eigenVec, subSpmat *sp, double *f){
+double getEigenVal(double *eigenVec, subSpmat *sp, double *f, double *aVec, double *bVec, double *cVec, double *BVk){
 	int n;
-	double *aVec, *bVec, *cVec, *BVk, res;
+	double res;
 
 	n = sp->n;
 
-	BVk = (double*)malloc(n*sizeof(double));
-	CHECKNEQ(BVk, NULL, "malloc VBk");
-	aVec = (double*)malloc(n*sizeof(double));
-	CHECKNEQ(aVec, NULL, "malloc aVec");
-	bVec = (double*)malloc(n*sizeof(double));
-	CHECKNEQ(bVec, NULL, "malloc bVec");
-	cVec = (double*)malloc(n*sizeof(double));
-	CHECKNEQ(cVec, NULL, "malloc cVec");
 
 	getAVmult(eigenVec, sp, aVec);
 	getRanksMult(eigenVec, sp, bVec);
@@ -231,12 +208,6 @@ double getEigenVal(double *eigenVec, subSpmat *sp, double *f){
 	 */
 
 	res = ((vecDot(eigenVec, BVk, n) / vecDot(eigenVec, eigenVec, n)) - sp->shift);
-
-
-	free(aVec);
-	free(bVec);
-	free(cVec);
-	free(BVk);
 
 
 	return res;
@@ -318,32 +289,15 @@ void divG1G2(double* eigenVec, int n, group* g, group** g1, group** g2){
 
 }
 
-double getModularity(subSpmat *subSp, double *division){
+double getModularity(subSpmat *subSp, double *division, double *aVec, double *bVec, double *cVec, double *Bs){
 	int n;
-	double *Bs, *aVec, *bVec, *cVec, res;
+	double res;
 
 	n = subSp->n;
-	Bs = (double*)malloc(n*sizeof(double));
-	CHECKNEQ(Bs, NULL, "malloc Bs");
-	aVec = (double*)malloc(n*sizeof(double));
-	CHECKNEQ(aVec, NULL, "malloc aVec");
-	bVec = (double*)malloc(n*sizeof(double));
-	CHECKNEQ(bVec, NULL, "malloc bVec");
-	cVec = (double*)calloc(n, sizeof(double));
-	CHECKNEQ(cVec, NULL, "malloc cVec");
 	getAVmult(division, subSp, aVec);
 	getRanksMult(division, subSp, bVec);
 	sumAll(aVec, bVec, cVec, Bs, n);
-
 	res = vecDot(division, Bs, n);
-
-
-	free(aVec);
-	free(bVec);
-	free(cVec);
-	free(Bs);
-
-
 	return res;
 }
 

@@ -15,7 +15,7 @@ void reinitializeUnmoved(group *unmoved, int len);
 void freeAfterModMax(group *unmoved, double *score, int *indices, double *improve, double *division);
 
 
-double* modMaximization(subSpmat *subSp,double *division, group *g){
+double* modMaximization(subSpmat *subSp,double *division, group *g, double *aVec, double *bVec, double *cVec, double *BVk){
 	int i, n, *indices, maxImproveIndex;
 	group *unmoved;
 	double deltaQ, QZero, *newDivision, *score, *improve;
@@ -27,9 +27,9 @@ double* modMaximization(subSpmat *subSp,double *division, group *g){
 		reinitializeUnmoved(unmoved, n);
 		for (i = 0; i < n; i++)
 		{
-			QZero = getModularity(subSp, newDivision);
+			QZero = getModularity(subSp, newDivision, aVec, bVec, cVec, BVk);
 			/* computing score vector */
-			computeScoreVector(score, subSp, newDivision, unmoved, QZero);
+			computeScoreVector(score, subSp, newDivision, unmoved, QZero, aVec, bVec, cVec, BVk);
 			/* finding and moving max deltaQ vertex */
 			moveMaxVertex(score, unmoved, newDivision, indices, improve, i);
 		}
@@ -96,7 +96,7 @@ void reinitializeUnmoved(group *unmoved, int len)
 }
 
 
-void computeScoreVector(double *score, subSpmat *subSp, double* newDiv, group *unmoved, double QZero)
+void computeScoreVector(double *score, subSpmat *subSp, double* newDiv, group *unmoved, double QZero, double *aVec, double *bVec, double *cVec, double *BVk)
 {
 	int j, *unmovedPtr;
 	double *scorePtr;
@@ -106,8 +106,11 @@ void computeScoreVector(double *score, subSpmat *subSp, double* newDiv, group *u
 
 	for (j = 0; j < unmoved->len; j++)
 	{
+
+
+
 		newDiv[*unmovedPtr] *= -1;
-		*scorePtr = (getModularity(subSp, newDiv)) - QZero;
+		*scorePtr = (getModularity(subSp, newDiv, aVec, bVec, cVec, BVk)) - QZero;
 		newDiv[*unmovedPtr] *= -1;
 		unmovedPtr++;
 		scorePtr++;
