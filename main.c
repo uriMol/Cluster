@@ -26,9 +26,12 @@ int main(int argc, char* argv[]){
 	group *g, *g1, *g2;
 	spmat *sp;
 	FILE *inputFile, *outputFile;
+	clock_t start, end;
+
 
 	/*SP_BUFF_SET();*/
 	printf("\nIn: main, start");
+	start = clock();
 
 
 	inputFile = fopen(argv[1], "r");
@@ -91,7 +94,8 @@ int main(int argc, char* argv[]){
 	/* printOutput(fopen(argv[2], "r")); */
 	/*TODO return s - the division*/
 	CHECKEQ (argc, argc, "argc");
-	printf("\nIn: main, complete");
+	end = clock();
+	printf("\nIn: main, complete, took %f seconds", ((double)(end - start)/CLOCKS_PER_SEC));
 	return 0;
 }
 
