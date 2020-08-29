@@ -1,10 +1,10 @@
 FLAGS = -ansi -Wall -Wextra -Werror -pedantic-errors
 LIBS = -lm
 
-all: main 
+all: cluster
 
-main: spmat.o spmatUtils.o list.o main.o group.o modularityMax.o mainUtils.o
-	gcc main.o spmat.o spmatUtils.o list.o group.o modularityMax.o mainUtils.o -o prog $(LIBS)
+cluster: spmat.o spmatUtils.o list.o main.o group.o modularityMax.o mainUtils.o
+	gcc main.o spmat.o spmatUtils.o list.o group.o modularityMax.o mainUtils.o -o cluster $(LIBS)
 mainUtils.o: mainUtils.c
 	gcc $(FLAGS) -c mainUtils.c
 list.o:	list.c
@@ -20,4 +20,4 @@ group.o: group.c
 main.o: main.c
 	gcc $(FLAGS) -c main.c
 clean:
-	rm -rf *.o prog
+	rm -rf *.o cluster
