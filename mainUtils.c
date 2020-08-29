@@ -10,6 +10,7 @@
 #include <time.h>
 #include <math.h>
 #include <string.h>
+#include "mainUtils.h"
 
 void createTestGraph(int* vec, int len, FILE *outputFile)
 {
@@ -37,3 +38,21 @@ void printOutput(FILE *outputFile)
 		free(tmpVert);
 	}
 }
+
+
+void 	freeAll(list *O, list* P, spmat *sp){
+	freeList(O);
+	freeList(P);
+	freeSpmat(sp);
+}
+
+void freeAfterDivision(subSpmat *subsp, double *f, double *division, double *eigenVec, group *g){
+	freeSubSpmat(subsp);
+	free(f);
+	free(division);
+	free(eigenVec);
+	free(g->indexes);
+	free(g);
+}
+
+

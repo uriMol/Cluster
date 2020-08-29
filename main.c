@@ -37,6 +37,8 @@ int main(int argc, char* argv[]){
 	/* allocating the array, setting it up with all values */
 	sp = spmat_setting(inputFile);
 
+	fclose(inputFile);
+
 	if(sp->M == 0){
 		printf("\nIn:main, checking sp->M == 0 getEigenVec");
 		return -1;
@@ -85,6 +87,8 @@ int main(int argc, char* argv[]){
 	exportData(outputFile, O);
 	fclose(outputFile);
 
+	freeAll(O, P, sp);
+
 	/* printOutput(fopen(argv[2], "r")); */
 	/*TODO return s - the division*/
 	CHECKEQ (argc, argc, "argc");
@@ -117,6 +121,7 @@ void divideG(spmat *sp, group *g, group **g1, group **g2){
 	}
 
 	divG1G2(eigenVec, subSp->n, g, g1, g2);
+	freeAfterDivision(subSp, f, division, eigenVec, g);
 
 }
 

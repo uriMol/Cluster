@@ -66,6 +66,12 @@ spmat* spmat_allocate_array(int n, int nnz);
 /* Getting the value C that we needs to shift */
 double getShift(spmat *sp);
 
+void freeSpmat(spmat *sp);
+
+void freeSubSpmat(subSpmat *subsp);
+
+
+
 
 
 #endif

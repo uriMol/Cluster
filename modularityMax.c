@@ -12,6 +12,8 @@
 #include <math.h>
 
 void reinitializeUnmoved(group *unmoved, int len);
+void freeAfterModMax(group *unmoved, double *score, int *indices, double *improve, double *division);
+
 
 double* modMaximization(subSpmat *subSp,double *division, group *g){
 	int i, n, *indices, maxImproveIndex;
@@ -42,6 +44,7 @@ double* modMaximization(subSpmat *subSp,double *division, group *g){
 			deltaQ = improve[maxImproveIndex];
 		}
 	} while (IS_POSITIVE(deltaQ));
+	freeAfterModMax(unmoved, score, indices, improve, division);
 	return newDivision;
 }
 
@@ -181,6 +184,14 @@ void shiftUntilI(double *newDiv, int i, int n, int *indices)
 
 }
 
+void freeAfterModMax(group *unmoved, double *score, int *indices, double *improve, double *division){
+	free(unmoved->indexes);
+	free(unmoved);
+	free(score);
+	free(indices);
+	free(improve);
+	free(division);
+}
 
 
 

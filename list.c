@@ -82,3 +82,16 @@ void printO(list* O){
 	}
 }
 
+void freeList(list *L){
+	list *lPtr;
+	while(L != NULL || L->g != NULL){
+		lPtr = L;
+		L = L->next;
+		free(lPtr->g->indexes);
+		free(lPtr->g);
+		free(lPtr);
+	}
+	if(L != NULL) free(L);
+}
+
+

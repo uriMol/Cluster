@@ -213,18 +213,22 @@ double getShift(spmat *sp){
 
 
 
-void arr_free(spmat *A){
+void freeSpmat(spmat *sp){
+	free(sp->colind);
+	free(sp->ranks);
+	free(sp->rowptr);
+	free(sp->values);
+	free(sp);
+}
 
-	printf("\nIn:arr_free, start");
-
-	free(A->colind);
-	free(A->rowptr);
-	free(A->values);
-	free(A);
-
-	printf("\nIn:arr_free, start");
+void freeSubSpmat(subSpmat *subsp){
+	free(subsp->subColind);
+	free(subsp->subRanks);
+	free(subsp->subValues);
+	free(subsp);
 
 }
+
 
 
 
