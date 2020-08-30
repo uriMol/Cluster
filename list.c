@@ -34,16 +34,17 @@ list* createP(int n){
 }
 
 list* createO(){
-	list *O = (list*) malloc(sizeof(list));
-	CHECKNEQ(O, NULL, "allocating O");
-	O->g = NULL;
-	O->next = NULL;
+	list *O = NULL;
 	return O;
 }
 
 
 list* listAdd(list *L, group *g){
 	list *newL;
+
+	if (g->len == 0){
+		printf(".");
+	}
 
 	newL = (list*)malloc(sizeof(list));
 	newL->g = g;
@@ -60,7 +61,7 @@ int countO(list *O)
 	tmp = O;
 	cnt = 0;
 
-	while (tmp->g != NULL)
+	while (tmp != NULL && tmp->g != NULL)
 	{
 		cnt++;
 		tmp = tmp->next;

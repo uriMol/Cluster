@@ -124,8 +124,8 @@ void divideG(spmat *sp, group *g, group **g1, group **g2, double *aVec,
 	}
 
 	division = divByEigen(eigenVec, subSp->n);
-	Q = getModularity(subSp, division, aVec, bVec, zeroVec, BVk);
 	division = modMaximization(subSp, division, g, aVec, bVec, zeroVec, BVk);
+	Q = getModularity(subSp, division, aVec, bVec, zeroVec, BVk);
 	if (!IS_POSITIVE(Q)){
 		*g1 = g;
 		*g2 = NULL;
@@ -145,7 +145,7 @@ void exportData(FILE *outputFile, list *O)
 	OPtr = O;
 	junk = fwrite(&numOfGroups, sizeof(int), 1, outputFile);
 	CHECKEQ(junk, 1, "writing numOfGroups");
-	while(OPtr->g != NULL)
+	while(OPtr != NULL)
 	{
 		tmpLen = OPtr->g->len;
 		junk = fwrite(&tmpLen, sizeof(int), 1, outputFile);
