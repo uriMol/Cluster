@@ -16,14 +16,16 @@ void freeAfterModMax(group *unmoved, double *score, int *indices, double *improv
 
 
 double* modMaximization(subSpmat *subSp,double *division, group *g, double *aVec, double *bVec, double *cVec, double *BVk){
-	int i, n, *indices, maxImproveIndex;
+	int i, n, *indices, maxImproveIndex, cnt;
 	group *unmoved;
 	double deltaQ, QZero, *newDivision, *score, *improve;
 
 	n = g->len;
 	modInitialize(&unmoved, n, division, &newDivision, &score, &indices, &improve);
 
+	cnt = 0;
 	do {
+		cnt++;
 		reinitializeUnmoved(unmoved, n);
 		for (i = 0; i < n; i++)
 		{
@@ -45,6 +47,7 @@ double* modMaximization(subSpmat *subSp,double *division, group *g, double *aVec
 		}
 	} while (IS_POSITIVE(deltaQ));
 	freeAfterModMax(unmoved, score, indices, improve, division);
+	printf("%d", cnt);
 	return newDivision;
 }
 
