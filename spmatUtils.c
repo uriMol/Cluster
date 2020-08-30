@@ -165,7 +165,7 @@ void normalize(double *vec, int n){
 	sum = sqrt(sum);
 	if(sum == 0) return;
 	for (i = 0; i < n; i++){
-		*vecPtr /= sum;
+		*vecPtr /= (2*sum);
 		vecPtr++;
 	}
 
@@ -289,7 +289,9 @@ void divG1G2(double* eigenVec, int n, group* g, group** g1, group** g2){
 
 }
 
-double getModularity(subSpmat *subSp, double *division, double *aVec, double *bVec, double *zeroVec, double *Bs){
+double getModularity(subSpmat *subSp, double *division, double *aVec, double *bVec,
+		double *zeroVec, double *Bs){
+
 	int n;
 	double res;
 

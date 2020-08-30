@@ -16,17 +16,15 @@ void freeAfterModMax(group *unmoved, double *score, int *indices, double *improv
 
 
 double* modMaximization(subSpmat *subSp,double *division, group *g, double *aVec,
-		double *bVec, double *zeroVec, double *BVk){
-	int i, n, *indices, maxImproveIndex, cnt;
+	double *bVec, double *zeroVec, double *BVk){
+	int i, n, *indices, maxImproveIndex;
 	group *unmoved;
 	double deltaQ, QZero, *newDivision, *score, *improve;
 
 	n = g->len;
 	modInitialize(&unmoved, n, division, &newDivision, &score, &indices, &improve);
 
-	cnt = 0;
 	do {
-		cnt++;
 		reinitializeUnmoved(unmoved, n);
 		for (i = 0; i < n; i++)
 		{
@@ -48,13 +46,12 @@ double* modMaximization(subSpmat *subSp,double *division, group *g, double *aVec
 		}
 	} while (IS_POSITIVE(deltaQ));
 	freeAfterModMax(unmoved, score, indices, improve, division);
-	printf("%d", cnt);
 	return newDivision;
 }
 
 void modInitialize(group **unmoved, int len, double *divOrig, double **divNew, double **score, int **indices, double **improve)
 {
-	int i, *indPtr;
+	int i;
 	double *newDivPtr, *divPtr;
 
 
@@ -72,16 +69,13 @@ void modInitialize(group **unmoved, int len, double *divOrig, double **divNew, d
 	(*improve) = (double*) malloc(sizeof(double) * len);
 	CHECKNEQ(*improve, NULL, "allocating improve");
 
-	indPtr = (*unmoved)->indexes;
 	newDivPtr = *divNew;
 	divPtr = divOrig;
 	for (i = 0; i < len; i++)
 	{
-		*indPtr = i;
 		*newDivPtr = *divPtr;
 		newDivPtr++;
 		divPtr++;
-		indPtr++;
 	}
 
 }
@@ -112,7 +106,7 @@ void computeScoreVector(double *score, subSpmat *subSp, double* newDiv, group *u
 	for (j = 0; j < unmoved->len; j++)
 	{
 		newDiv[*unmovedPtr] *= -1;
-		*scorePtr = (getModularity(subSp, newDiv, aVec, bVec, zeroVec, BVk)) - QZero;
+		*scorePtr = getModularity(subSp, newDiv, aVec, bVec, zeroVec, BVk) - QZero;
 		newDiv[*unmovedPtr] *= -1;
 		unmovedPtr++;
 		scorePtr++;
@@ -185,7 +179,6 @@ void shiftUntilI(double *newDiv, int i, int n, int *indices)
 	{
 		newDiv[indices[k]] *= -1;
 	}
-
 }
 
 void freeAfterModMax(group *unmoved, double *score, int *indices, double *improve, double *division){

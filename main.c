@@ -100,7 +100,7 @@ int main(int argc, char* argv[]){
 
 	freeAll(O, P, sp, subSp);
 
-	/*printOutput(fopen(argv[2], "r"));*/
+	printOutput(fopen(argv[2], "r"));
 	/*TODO return s - the division*/
 	CHECKEQ (argc, argc, "argc");
 	end = clock();
