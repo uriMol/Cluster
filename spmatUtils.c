@@ -289,14 +289,14 @@ void divG1G2(double* eigenVec, int n, group* g, group** g1, group** g2){
 
 }
 
-double getModularity(subSpmat *subSp, double *division, double *aVec, double *bVec, double *cVec, double *Bs){
+double getModularity(subSpmat *subSp, double *division, double *aVec, double *bVec, double *zeroVec, double *Bs){
 	int n;
 	double res;
 
 	n = subSp->n;
 	getAVmult(division, subSp, aVec);
 	getRanksMult(division, subSp, bVec);
-	sumAll(aVec, bVec, cVec, Bs, n);
+	sumAll(aVec, bVec, zeroVec, Bs, n);
 	res = vecDot(division, Bs, n);
 	return res;
 }
