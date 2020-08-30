@@ -11,5 +11,4 @@ void removeMaxIndex(group *g, int i)
 {
 	g->indexes[i] = g->indexes[g->len - 1];
 	g->len--;
-
 }
