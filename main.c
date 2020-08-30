@@ -19,9 +19,9 @@
 #include "mainUtils.h"
 
 void 	divideG(spmat *sp, group *g, group **g1, group **g2, double *aVec, double *bVec,
-		double *cVec, double *BVk, subSpmat *subSp, double *zeroVec);
+		double *cVec, double *BVk, subSpmat *subSp);
 void 	exportData(FILE *outputFile, list *O);
-void 	createVectors(double **BVk, double **aVec, double **bVec, double **cVec, int n, double **zeroVec);
+void 	createVectors(double **BVk, double **aVec, double **bVec, double **cVec, int n);
 subSpmat* createSubsp(spmat *sp);
 
 
@@ -32,7 +32,7 @@ int main(int argc, char* argv[]){
 	spmat *sp;
 	FILE *inputFile, *outputFile;
 	clock_t start, end;
-	double *aVec, *bVec, *cVec, *BVk, *zeroVec;
+	double *aVec, *bVec, *cVec, *BVk;
 	subSpmat *subSp;
 
 
@@ -57,7 +57,7 @@ int main(int argc, char* argv[]){
 	/* allocating P and O */
 	P = createP(sp->n);
 	O = createO();
-	createVectors(&BVk, &aVec, &bVec, &cVec, sp->n, &zeroVec);
+	createVectors(&BVk, &aVec, &bVec, &cVec, sp->n);
 	subSp = createSubsp(sp);
 
 	/* Starting the division while loop */
@@ -65,12 +65,13 @@ int main(int argc, char* argv[]){
 	while(P != NULL){
 		g = P->g;
 		P = P->next;
-		divideG(sp, g, &g1, &g2, aVec, bVec, cVec, BVk, subSp, zeroVec);
+		divideG(sp, g, &g1, &g2, aVec, bVec, cVec, BVk, subSp);
 		if (g2 == NULL || g2->len == 0)
 		{
 			O = listAdd(O, g1);
 			/*TODO free if len is 0*/
-		} else if(g1 == NULL || g1->len == 0)
+		}
+		else if(g1 == NULL || g1->len == 0)
 		{
 			O = listAdd(O, g2);
 			/*TODO free if len is 0*/
@@ -110,7 +111,7 @@ int main(int argc, char* argv[]){
 }
 
 void divideG(spmat *sp, group *g, group **g1, group **g2, double *aVec,
-		double *bVec, double *cVec, double *BVk, subSpmat *subSp, double *zeroVec){
+		double *bVec, double *cVec, double *BVk, subSpmat *subSp){
 	double *eigenVec, eigenVal, *division, Q, *f;
 
 	extractSubMatrix(sp, g, subSp);
@@ -125,8 +126,8 @@ void divideG(spmat *sp, group *g, group **g1, group **g2, double *aVec,
 	}
 
 	division = divByEigen(eigenVec, subSp->n);
-	division = modMaximization(subSp, division, g, aVec, bVec, zeroVec, BVk);
-	Q = getModularity(subSp, division, aVec, bVec, zeroVec, BVk);
+	division = modMaximization(subSp, division, g, aVec, bVec, cVec, BVk, f);
+	Q = getModularity(subSp, division, aVec, bVec, cVec, BVk, f);
 	if (!IS_POSITIVE(Q)){
 		*g1 = g;
 		*g2 = NULL;
@@ -134,6 +135,9 @@ void divideG(spmat *sp, group *g, group **g1, group **g2, double *aVec,
 	}
 
 	divG1G2(eigenVec, subSp->n, g, g1, g2);
+	if ((*g1)->len == 0 || (*g2)->len == 0){
+		printf("1");
+	}
 	freeAfterDivision(f, division, eigenVec, g);
 }
 
@@ -158,7 +162,7 @@ void exportData(FILE *outputFile, list *O)
 }
 
 
-void createVectors(double **BVk, double **aVec, double **bVec, double **cVec, int n, double **zeroVec){
+void createVectors(double **BVk, double **aVec, double **bVec, double **cVec, int n){
 	*(BVk) = (double*)malloc(n*sizeof(double));
 	CHECKNEQ(*BVk, NULL, "malloc BVk");
 	*(aVec) = (double*)malloc(n*sizeof(double));
@@ -167,8 +171,6 @@ void createVectors(double **BVk, double **aVec, double **bVec, double **cVec, in
 	CHECKNEQ(*bVec, NULL, "malloc bVec");
 	*(cVec) = (double*)calloc(n, sizeof(double));
 	CHECKNEQ(*cVec, NULL, "calloc cVec");
-	*(zeroVec) = (double*)calloc(n, sizeof(double));
-	CHECKNEQ(*zeroVec, NULL, "calloc zeroVec");
 }
 
 subSpmat* createSubsp(spmat *sp){

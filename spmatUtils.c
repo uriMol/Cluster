@@ -16,10 +16,12 @@ double* getRandVec(int n);
 void getAVmult(const double *eigenVec, subSpmat *sp, double* result);
 void getRanksMult(double *eigenVec, subSpmat *sp, double *result);
 void getShiftandFMult(double *eigenVec, subSpmat *sp,double *f, double *result);
+void getFdivMult(double *division, double *f, double *cVec, int n);
 void sumAll(double *aVec, double *bVec, double *cVec, double *result, int n);
 void normalize(double *vec, int n);
 double vecDot(double *aVec, double *bVec, int n);
 int updateEigen(double *VBk, double *eigenVec, int n);
+
 
 
 
@@ -131,8 +133,24 @@ void getShiftandFMult(double *eigenVec, subSpmat *sp, double *f, double *result)
 		eigenPtr++;
 		fPtr++;
 	}
-
 }
+
+void getFdivMult(double *division, double *f, double *cVec, int n){
+	double *divPtr, *fPtr, *cPtr;
+	int i;
+
+	divPtr = division;
+	fPtr = f;
+	cPtr = cVec;
+	for (i = 0; i < n; i++){
+		*cPtr = -((*divPtr) * (*fPtr));
+		cPtr++;
+		divPtr++;
+		fPtr++;
+	}
+}
+
+
 void sumAll(double *aVec, double *bVec, double *cVec, double *result, int n){
 	int i;
 	double *aPtr, *bPtr, *cPtr, *res;
@@ -250,12 +268,12 @@ double* divByEigen(double* eigenVec, int n){
 	return division;
 }
 
-void divG1G2(double* eigenVec, int n, group* g, group** g1, group** g2){
+void divG1G2(double* division, int n, group* g, group** g1, group** g2){
 	int i, g1len, g2len, *gPtr, *g1Ptr, *g2Ptr;
 	double *eigPtr;
 
 
-	eigPtr = eigenVec;
+	eigPtr = division;
 	g1len = 0;
 	g2len = 0;
 	*g1 = (group*)malloc(sizeof(group));
@@ -286,11 +304,10 @@ void divG1G2(double* eigenVec, int n, group* g, group** g1, group** g2){
 	(*g2)->len = g2len;
 	(*g1)->indexes = (int*) realloc((*g1)->indexes, sizeof(int)*g1len);
 	(*g2)->indexes = (int*) realloc((*g2)->indexes, sizeof(int)*g2len);
-
 }
 
 double getModularity(subSpmat *subSp, double *division, double *aVec, double *bVec,
-		double *zeroVec, double *Bs){
+		double *cVec, double *Bs, double *f){
 
 	int n;
 	double res;
@@ -298,7 +315,8 @@ double getModularity(subSpmat *subSp, double *division, double *aVec, double *bV
 	n = subSp->n;
 	getAVmult(division, subSp, aVec);
 	getRanksMult(division, subSp, bVec);
-	sumAll(aVec, bVec, zeroVec, Bs, n);
+	getFdivMult(division, f, cVec, n);
+	sumAll(aVec, bVec, cVec, Bs, n);
 	res = vecDot(division, Bs, n);
 	return res;
 }

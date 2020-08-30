@@ -21,7 +21,7 @@ double* divByEigen(double* eigenVec, int n);
 
 double getEigenVal(double *eigenVec, subSpmat *sp, double *f, double *aVec, double *bVec, double *cVec, double *BVk);
 
-double getModularity(subSpmat *subSp, double *division, double *aVec, double *bVec, double *cVec, double *Bs);
+double getModularity(subSpmat *subSp, double *division, double *aVec, double *bVec, double *cVec, double *Bs, double *f);
 
 double* getF(spmat *sp, group *g);
 
