@@ -58,7 +58,7 @@ typedef struct _subSpmat {
 spmat* spmat_setting(FILE *inputFile);
 
 /* Create a sbuMatrix from sp according to indices in g */
-subSpmat* extractSubMatrix(spmat *sp, group *g);
+void extractSubMatrix(spmat *sp, group *g, subSpmat *subSp);
 
 /* Allocates a new arrays sparse matrix of size n with nnz non-zero elements */
 spmat* spmat_allocate_array(int n, int nnz);

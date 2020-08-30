@@ -40,14 +40,14 @@ void printOutput(FILE *outputFile)
 }
 
 
-void 	freeAll(list *O, list* P, spmat *sp){
+void 	freeAll(list *O, list* P, spmat *sp, subSpmat *subSp){
 	freeList(O);
 	freeList(P);
 	freeSpmat(sp);
+	freeSubSpmat(subSp);
 }
 
-void freeAfterDivision(subSpmat *subsp, double *f, double *division, double *eigenVec, group *g){
-	freeSubSpmat(subsp);
+void freeAfterDivision(double *f, double *division, double *eigenVec, group *g){
 	free(f);
 	free(division);
 	free(eigenVec);

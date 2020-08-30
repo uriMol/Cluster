@@ -12,7 +12,6 @@
 
 /* declaring all future functions */
 void add_row(struct _spmat* , const int*, int, int);
-void arr_free(spmat*);
 
 spmat* spmat_setting(FILE *inputFile){
 	int k, i, tmpRank, vertices, ranks, *junk, *tmpRow;
@@ -57,28 +56,16 @@ spmat* spmat_setting(FILE *inputFile){
 	return sp;
 }
 
-subSpmat* extractSubMatrix(spmat *sp, group *g)
+void extractSubMatrix(spmat *sp, group *g, subSpmat *subSp)
 {
 	int len, i, j, subM, *colInd, tmpRnk, subTmpRnk, *subRnkPtr, *subColPtr, *indPtr, *subValPtr;
-	subSpmat *subSp;
 
 	len = g->len;
-	/* allocating the arrays */
-	subSp = (subSpmat*) malloc(sizeof(subSpmat));
-	CHECKNEQ(subSp, NULL, "allocating subSp");
-	subSp->subRanks = (int*) malloc(sizeof(int) * len);
-	CHECKNEQ(subSp->subRanks, NULL, "allocating subSp->subRanks");
+	/* Initializing the arrays */
 	subRnkPtr = subSp->subRanks;
-	subSp->M = sp->M;
-	subSp->subValues = (int*) malloc(sizeof(int) * sp->M);
-	CHECKNEQ(subSp->subValues, NULL, "allocating subSp->subValues");
 	subValPtr = subSp->subValues;
-	subSp->origRanks = sp->ranks;
-	subSp->subColind = (int*) malloc(sizeof(int) * sp->M);
-	CHECKNEQ(subSp->subColind, NULL, "allocating subSp->subColind");
 	subColPtr = subSp->subColind;
 	subSp->g = g->indexes;
-	subSp->shift = sp->shift;
 	subSp->n = len;
 
 	subM = 0;
@@ -118,14 +105,7 @@ subSpmat* extractSubMatrix(spmat *sp, group *g)
 		subRnkPtr++;
 		subM += subTmpRnk;
 	}
-	subSp->subColind = (int*)realloc(subSp->subColind, subM*sizeof(int));
-	CHECKNEQ(subSp->subColind, NULL, "allocating subSp->subColind");
-	subSp->subValues = (int*)realloc(subSp->subValues, subM*sizeof(int));
-	CHECKNEQ(subSp->subValues, NULL, "allocating subSp->subValues");
 	subSp->subM = subM;
-
-
-	return subSp;
 }
 
 void add_row(spmat *A, const int *row, int i, int rank){

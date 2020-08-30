@@ -12,8 +12,8 @@
 #define MAINUTILS_H_
 
 void 	printOutput(FILE *outputFile);
-void 	freeAll(list *O, list* P, spmat *sp);
-void freeAfterDivision(subSpmat *subsp, double *f, double *division, double *eigenVec, group *g);
+void 	freeAll(list *O, list* P, spmat *sp, subSpmat *subsp);
+void freeAfterDivision(double *f, double *division, double *eigenVec, group *g);
 
 
 
