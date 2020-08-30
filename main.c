@@ -66,13 +66,14 @@ int main(int argc, char* argv[]){
 		g = P->g;
 		P = P->next;
 		divideG(sp, g, &g1, &g2, aVec, bVec, cVec, BVk, subSp, zeroVec);
-		if(g1 == NULL)
-		{
-			O = listAdd(O, g2);
-		}
-		else if (g2 == NULL)
+		if (g2 == NULL || g2->len == 0)
 		{
 			O = listAdd(O, g1);
+			/*TODO free if len is 0*/
+		} else if(g1 == NULL || g1->len == 0)
+		{
+			O = listAdd(O, g2);
+			/*TODO free if len is 0*/
 		}
 		else
 		{
