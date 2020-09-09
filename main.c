@@ -126,7 +126,7 @@ void divideG(spmat *sp, group *g, group **g1, group **g2, double *aVec,
 	}
 
 	division = divByEigen(eigenVec, subSp->n);
-	division = modMaximization(subSp, division, g, aVec, bVec, cVec, BVk, f);
+	division = modMaximization(subSp, division, g);
 	Q = getModularity(subSp, division, aVec, bVec, cVec, BVk, f);
 	if (!IS_POSITIVE(Q)){
 		*g1 = g;
