@@ -34,7 +34,6 @@ int main(int argc, char* argv[]){
 	clock_t start, end;
 	double *aVec, *bVec, *cVec, *BVk;
 	subSpmat *subSp;
-	int i, *tmpRankPtr;
 
 
 	/*SP_BUFF_SET();*/
@@ -49,11 +48,6 @@ int main(int argc, char* argv[]){
 	sp = spmat_setting(inputFile);
 
 	fclose(inputFile);
-
-	tmpRankPtr = sp->ranks;
-	for(i = 0; i < sp->n; i++){
-		printf("node num %d has rank %d \n",i, *(tmpRankPtr++));
-	}
 
 	if(sp->M == 0){
 		printf("\nIn:main, checking sp->M == 0 getEigenVec");

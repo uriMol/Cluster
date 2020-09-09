@@ -29,11 +29,11 @@ spmat* spmat_setting(FILE *inputFile){
 	{
 		k = fread(&tmpRank, sizeof(int), 1, inputFile);
 		CHECKEQ(k, 1, "Reading File");
-		printf("node num %d has rank %d \n",i, tmpRank);
 		ranks += tmpRank;
 		k = fread(junk, sizeof(int), tmpRank, inputFile);
 		CHECKEQ(k, tmpRank, "Reading File");
 	}
+
 	/*Allocating the matrix */
 	sp = spmat_allocate_array(vertices, ranks);
 	/*now we read the matrix into spmat */
