@@ -10,8 +10,7 @@
 #define MODULARITYMAX_H_
 
 void modInitialize(group **unmoved, int len, double *divOrig, double **divNew, double **score, int **indices, double **improve);
-void computeScoreVector(double *score, subSpmat *subSp, double* newDiv, group *unmoved,
-		double QZero, double *aVec, double *bVec, double *cVec, double *BVk, double *f);
+void computeScoreVector(double *score, double *newDiv, subSpmat *subSp, int maxImproveIndex);
 void computeScoreVector2(double *score, subSpmat *subSp, double* newDiv);
 int moveMaxVertex(double *score, group *unmoved, double *newDiv, int *indices, double *improve, int i);
 void shiftUntilI(double *newDiv, int i, int n, int *indices);

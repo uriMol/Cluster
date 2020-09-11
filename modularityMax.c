@@ -16,7 +16,7 @@ void freeAfterModMax(group *unmoved, double *score, int *indices, double *improv
 
 
 double* modMaximization(subSpmat *subSp, double *division, group *g){
-	int i, n, *indices, maxImproveIndex;
+	int i, n, *indices, maxImproveIndex, prevImproveIndex;
 	group *unmoved;
 	double deltaQ, *newDivision, *score, *improve;
 
@@ -28,10 +28,15 @@ double* modMaximization(subSpmat *subSp, double *division, group *g){
 		for (i = 0; i < n; i++)
 		{
 
-			computeScoreVector2(score, subSp, newDivision);
-
+			if(i != 0)
+			{
+				computeScoreVector(score, newDivision, subSp, prevImproveIndex);
+			} else
+			{
+				computeScoreVector2(score, subSp, newDivision);
+			}
 			 /* finding and moving max deltaQ vertex */
-			moveMaxVertex(score, unmoved, newDivision, indices, improve, i);
+			prevImproveIndex = moveMaxVertex(score, unmoved, newDivision, indices, improve, i);
 		}
 		maxImproveIndex = findMaxImprove(improve, n);
 		shiftUntilI(newDivision, maxImproveIndex, n, indices);
@@ -140,34 +145,50 @@ void computeScoreVector2(double *score, subSpmat *subSp, double* newDiv)
 
 
 
-void computeScoreVector(double *score, subSpmat *subSp, double* newDiv, group *unmoved,
-		double QZero, double *aVec, double *bVec, double *cVec, double *BVk, double *f)
+void computeScoreVector(double *score, double *newDiv, subSpmat *subSp, int maxImproveIndex)
 {
-	int j, *unmovedPtr;
-	double *scorePtr;
+	int i, n, *colIndPtr, maxIndRank, *subRanksPtr;
+	double *scorePtr, cMax, *newDivPtr, ajm, bjm, djm, M;
 
+	M = subSp->M;
+	cMax = newDiv[maxImproveIndex];
+	maxIndRank = subSp->origRanks[subSp->g[maxImproveIndex]];
 	scorePtr = score;
-	unmovedPtr = unmoved->indexes;
-
-	for (j = 0; j < unmoved->len; j++)
+	n = subSp->n;
+	colIndPtr = subSp->subColind;
+	subRanksPtr = subSp->subRanks;
+	newDivPtr = newDiv;
+	for(i = 0; i < maxImproveIndex; i++){
+		colIndPtr += *subRanksPtr;
+		subRanksPtr++;
+	}
+	for(i = 0; i < n; i++)
 	{
-		newDiv[*unmovedPtr] *= -1;
-		*scorePtr = getModularity(subSp, newDiv, aVec, bVec, cVec, BVk, f) - QZero;
-		newDiv[*unmovedPtr] *= -1;
-		unmovedPtr++;
+		*newDivPtr *= -1;
+		ajm = 0;
+
+		if(*colIndPtr == i)
+		{
+			ajm = 1;
+			colIndPtr++;
+		}
+		djm = maxIndRank * (subSp->origRanks[subSp->g[i]]) / M;
+		bjm = ajm - djm;
+		*scorePtr += (8 * (*newDivPtr) * bjm * cMax);
+		*newDivPtr *= -1;
 		scorePtr++;
+		newDivPtr++;
 	}
 }
 
 int moveMaxVertex(double *score, group *unmoved, double *newDiv, int *indices, double *improve, int i)
 {
 	double max, tmpScore;
-	int maxIndex, j, *unmovedPtr;
+	int maxIndex, j, *unmovedPtr, prevMaxIndex;
 
 	maxIndex = 0;
 	unmovedPtr = unmoved->indexes;
 	max = score[*unmovedPtr];
-
 	for (j = 0; j < unmoved->len; j++)
 	{
 		tmpScore = score[*unmovedPtr];
@@ -189,8 +210,9 @@ int moveMaxVertex(double *score, group *unmoved, double *newDiv, int *indices, d
 	{
 		improve[i] = improve[i-1] + max;
 	}
+	prevMaxIndex = unmoved->indexes[maxIndex];
 	removeMaxIndex(unmoved, maxIndex);
-	return unmoved->indexes[maxIndex];
+	return prevMaxIndex;
 }
 
 int findMaxImprove(double *improve, int n)
