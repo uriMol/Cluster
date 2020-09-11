@@ -16,7 +16,7 @@ void freeAfterModMax(group *unmoved, double *score, int *indices, double *improv
 
 
 double* modMaximization(subSpmat *subSp, double *division, group *g){
-	int i, n, *indices, maxImproveIndex, prevMaxIndex;
+	int i, n, *indices, maxImproveIndex;
 	group *unmoved;
 	double deltaQ, *newDivision, *score, *improve;
 
@@ -27,18 +27,11 @@ double* modMaximization(subSpmat *subSp, double *division, group *g){
 		reinitializeUnmoved(unmoved, n);
 		for (i = 0; i < n; i++)
 		{
-			if(i != 0){
-				/*
-				 * we should set this as lior did the updating of score vectors
-				 */
-				computeScoreVector(score, newDivision, unmoved, prevMaxIndex);
-			}else{
-				computeScoreVector2(score, subSp, newDivision);
-			}
 
+			computeScoreVector2(score, subSp, newDivision);
 
 			 /* finding and moving max deltaQ vertex */
-			prevMaxIndex = moveMaxVertex(score, unmoved, newDivision, indices, improve, i);
+			moveMaxVertex(score, unmoved, newDivision, indices, improve, i);
 		}
 		maxImproveIndex = findMaxImprove(improve, n);
 		shiftUntilI(newDivision, maxImproveIndex, n, indices);
@@ -101,10 +94,10 @@ void reinitializeUnmoved(group *unmoved, int len)
 
 void computeScoreVector2(double *score, subSpmat *subSp, double* newDiv)
 {
-	double *scorePtr, scoreVal, *di, *dj, tmpVal;
-	int i, j, n, *subColIndPtr, M, Ki, Kj, *gPtr, *tmpGPtr, Aij;
+	double *scorePtr, scoreVal, *di, *dj, tmpVal, M;
+	int i, j, n, *subColIndPtr, Ki, Kj, *gPtr, *tmpGPtr, Aij;
 
-	M = subSp->M;
+	M = (double) subSp->M;
 	n = subSp->n;
 	scorePtr = score;
 
@@ -178,7 +171,7 @@ int moveMaxVertex(double *score, group *unmoved, double *newDiv, int *indices, d
 	for (j = 0; j < unmoved->len; j++)
 	{
 		tmpScore = score[*unmovedPtr];
-		if(tmpScore > max)
+		if(tmpScore >= max)
 		{
 			max = tmpScore;
 			maxIndex = j;
