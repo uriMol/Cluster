@@ -270,10 +270,10 @@ double* divByEigen(double* eigenVec, int n){
 
 void divG1G2(double* division, int n, group* g, group** g1, group** g2){
 	int i, g1len, g2len, *gPtr, *g1Ptr, *g2Ptr;
-	double *eigPtr;
+	double *divPtr;
 
 
-	eigPtr = division;
+	divPtr = division;
 	g1len = 0;
 	g2len = 0;
 	*g1 = (group*)malloc(sizeof(group));
@@ -288,7 +288,7 @@ void divG1G2(double* division, int n, group* g, group** g1, group** g2){
 	g2Ptr = (*g2)->indexes;
 	gPtr = g->indexes;
 	for (i = 0; i < n; i++){
-		if(IS_POSITIVE(*eigPtr)){
+		if(IS_POSITIVE(*divPtr)){
 			*g1Ptr = *gPtr;
 			g1len++;
 			g1Ptr++;
@@ -298,7 +298,7 @@ void divG1G2(double* division, int n, group* g, group** g1, group** g2){
 			g2Ptr++;
 		}
 		gPtr++;
-		eigPtr++;
+		divPtr++;
 	}
 	(*g1)->len = g1len;
 	(*g2)->len = g2len;

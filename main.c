@@ -46,7 +46,6 @@ int main(int argc, char* argv[]){
 
 	/* allocating the array, setting it up with all values */
 	sp = spmat_setting(inputFile);
-	printB(sp);
 
 	fclose(inputFile);
 
@@ -135,10 +134,7 @@ void divideG(spmat *sp, group *g, group **g1, group **g2, double *aVec,
 		return;
 	}
 
-	divG1G2(eigenVec, subSp->n, g, g1, g2);
-	if ((*g1)->len == 0 || (*g2)->len == 0){
-		printf("1");
-	}
+	divG1G2(division, subSp->n, g, g1, g2);
 	freeAfterDivision(f, division, eigenVec, g);
 }
 
