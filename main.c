@@ -121,6 +121,7 @@ void divideG(spmat *sp, group *g, group **g1, group **g2, double *aVec,
 	if (!IS_POSITIVE(eigenVal)){
 		*g1 = g;
 		*g2 = NULL;
+		freeBeforeDivision(f, eigenVec);
 		return;
 	}
 
@@ -130,6 +131,7 @@ void divideG(spmat *sp, group *g, group **g1, group **g2, double *aVec,
 	if (!IS_POSITIVE(Q)){
 		*g1 = g;
 		*g2 = NULL;
+		freeBeforeDivision(f, eigenVec);
 		return;
 	}
 

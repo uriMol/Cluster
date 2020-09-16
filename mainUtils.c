@@ -53,11 +53,16 @@ void 	freeAll(list *O, list* P, spmat *sp, subSpmat *subSp,
 }
 
 void freeAfterDivision(double *f, double *division, double *eigenVec, group *g){
-	free(f);
+	freeBeforeDivision(f, eigenVec);
 	free(division);
-	free(eigenVec);
 	free(g->indexes);
 	free(g);
+}
+
+void freeBeforeDivision(double *f, double *eigenVec){
+	free(f);
+	free(eigenVec);
+
 }
 
 

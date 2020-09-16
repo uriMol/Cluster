@@ -15,6 +15,8 @@ void 	printOutput(FILE *outputFile);
 void 	freeAll(list *O, list* P, spmat *sp, subSpmat *subSp,
 		double *aVec, double *bVec, double *cVec, double *BVk);
 void freeAfterDivision(double *f, double *division, double *eigenVec, group *g);
+void freeBeforeDivision(double *f, double *eigenVec);
+
 
 
 
