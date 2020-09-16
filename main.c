@@ -37,7 +37,7 @@ int main(int argc, char* argv[]){
 
 
 	/*SP_BUFF_SET();*/
-	printf("\nIn: main, start");
+	printf("In: main, start");
 	start = clock();
 
 
@@ -101,9 +101,6 @@ int main(int argc, char* argv[]){
 	fclose(outputFile);
 
 	freeAll(O, P, sp, subSp);
-
-	printOutput(fopen(argv[2], "r"));
-	/*TODO return s - the division*/
 	CHECKEQ (argc, argc, "argc");
 	end = clock();
 	printf("\nIn: main, complete, took %f seconds", ((double)(end - start)/CLOCKS_PER_SEC));
