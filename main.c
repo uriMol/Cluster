@@ -51,7 +51,7 @@ int main(int argc, char* argv[])
 		P = P->next;
 		free(tmpList);
 		divideG(sp, g, &g1, &g2, aVec, bVec, cVec, BVk, subSp);
-		moveGroupsToLists(g1, g2, P, O);
+		moveGroupsToLists(g1, g2, &P, &O);
 	}
 	outputFile = fopen(argv[2], "w");
 	exportData(outputFile, O);
