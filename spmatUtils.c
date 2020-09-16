@@ -32,7 +32,7 @@ double* getRandVec(int n){
 
 
 	v = (double*)malloc(n*sizeof(double));
-	CHECKNEQ(v, NULL, "allocating randVec v");
+	CHECK(v != NULL, "allocating randVec v");
 	for (i = 0; i < n; i++){
 		v[i] = rand();
 	}
@@ -277,13 +277,13 @@ void divG1G2(double* division, int n, group* g, group** g1, group** g2){
 	g1len = 0;
 	g2len = 0;
 	*g1 = (group*)malloc(sizeof(group));
-	CHECKNEQ(g1, NULL, "allocating g1 in divByEigen");
+	CHECK(g1 != NULL, "allocating g1 in divByEigen");
 	(*g1)->indexes = (int*) malloc(sizeof(int)*n);
-	CHECKNEQ((*g1)->indexes, NULL, "allocating g1->indexes in divByEigen");
+	CHECK((*g1)->indexes != NULL, "allocating g1->indexes in divByEigen");
 	(*g2) = (group*)malloc(sizeof(group));
-	CHECKNEQ(g2, NULL, "allocating g2 in divByEigen");
+	CHECK(g2 != NULL, "allocating g2 in divByEigen");
 	(*g2)->indexes = (int*) malloc(sizeof(int)*n);
-	CHECKNEQ((*g2)->indexes, NULL, "allocating g2->indexes in divByEigen");
+	CHECK((*g2)->indexes != NULL, "allocating g2->indexes in divByEigen");
 	g1Ptr = (*g1)->indexes;
 	g2Ptr = (*g2)->indexes;
 	gPtr = g->indexes;
@@ -330,7 +330,7 @@ double* getF(spmat *sp, group *g){
 
 	len = g->len;
 	f = (double*) malloc(sizeof(double)*len);
-	CHECKNEQ(f, NULL, "allocating f");
+	CHECK(f != NULL, "allocating f");
 	fPtr = f;
 	rnkConst = 0;
 	for (i = 0; i < len; i++)

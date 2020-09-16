@@ -18,20 +18,20 @@ spmat* spmat_setting(FILE *inputFile){
 	spmat *sp;
 
 	k = fread(&vertices, sizeof(int), 1, inputFile);
-	CHECKEQ(k, 1, "Reading File");
+	CHECK(k == 1, "Reading File");
 
 	junk = (int*)malloc(sizeof(int) * vertices);
-	CHECKNEQ(junk, NULL, "malloc junk");
+	CHECK(junk != NULL, "malloc junk");
 
 	/* checking sum of ranks*/
 	ranks = 0;
 	for (i = 0; i < vertices; i++)
 	{
 		k = fread(&tmpRank, sizeof(int), 1, inputFile);
-		CHECKEQ(k, 1, "Reading File");
+		CHECK(k == 1, "Reading File");
 		ranks += tmpRank;
 		k = fread(junk, sizeof(int), tmpRank, inputFile);
-		CHECKEQ(k, tmpRank, "Reading File");
+		CHECK(k == tmpRank, "Reading File");
 	}
 
 	/*Allocating the matrix */
@@ -39,14 +39,14 @@ spmat* spmat_setting(FILE *inputFile){
 	/*now we read the matrix into spmat */
 	rewind(inputFile);
 	k = fread(junk, sizeof(int) , 1, inputFile);
-	CHECKEQ(k,	 1, "Reading File");
+	CHECK(k == 1, "Reading File");
 	tmpRow = (int*) malloc(vertices * sizeof(int));
-	CHECKNEQ(tmpRow, NULL, "Allocating");
+	CHECK(tmpRow != NULL, "Allocating");
 	for (i = 0; i < vertices; i++){
 		k = fread(&tmpRank, sizeof(int) , 1, inputFile);
-		CHECKEQ(k, 1, "Reading File");
+		CHECK(k == 1, "Reading File");
 		k = fread(tmpRow, sizeof(int), tmpRank, inputFile);
-		CHECKEQ(k, tmpRank, "Reading File");
+		CHECK(k == tmpRank, "Reading File");
 		add_row(sp, tmpRow, i, tmpRank);
 	}
 	free(tmpRow);
@@ -144,21 +144,20 @@ spmat* spmat_allocate_array(int n, int nnz){
 
 
 	sp = (spmat*) malloc(sizeof(spmat));
-	CHECKNEQ(sp, NULL, "Allocating");
+	CHECK(sp != NULL, "Allocating");
 
 	sp->n = n;
 	sp->M = nnz;
 
 	/* now defining the private field - using array_helper to keep all non-zero values */
 	sp->values = (int*) malloc(nnz * sizeof(int));
-	CHECKNEQ(sp->values, NULL, "Allocating");
+	CHECK(sp->values != NULL, "Allocating");
 	sp->colind = (int*) malloc(nnz * sizeof(int));
-	CHECKNEQ(sp->colind, NULL, "Allocating");
+	CHECK(sp->colind != NULL, "Allocating");
 	sp->rowptr = (int*) malloc((n+1) * sizeof(int));
-	CHECKNEQ(sp->rowptr, NULL, "Allocating");
+	CHECK(sp->rowptr != NULL, "Allocating");
 	sp->ranks = (int*) malloc(n * sizeof(int));
-	CHECKNEQ(sp->ranks, NULL, "Allocating");
-
+	CHECK(sp->ranks != NULL, "Allocating");
 
 	return sp;
 }
