@@ -96,7 +96,7 @@ void getRanksMult(double *eigenVec, subSpmat *sp, double *result){
 	int n, i, j, *rnkPtr, *gPtr;
 	double *resPtr, *eigPtr, m, rnkConst;
 
-	m = sp->M;
+	m = (double)sp->M;
 	n = sp->n;
 	rnkPtr = sp->origRanks;
 	eigPtr = eigenVec;
@@ -326,7 +326,7 @@ double* getF(spmat *sp, group *g){
 	double *f, tmpRnkMult, M, rnkConst, *fPtr;
 
 
-	M = sp->M;
+	M = (double)sp->M;
 
 	len = g->len;
 	f = (double*) malloc(sizeof(double)*len);
@@ -410,7 +410,7 @@ void printB(spmat *sp){
 	ranks = sp->ranks;
 	colPtr = sp->colind;
 	valPtr = sp->values;
-	m = sp->M;
+	m = (double)sp->M;
 	printf("\n");
 	for (i = 0; i < n; i++){
 		for(j = 0; j < n; j++){

@@ -150,7 +150,7 @@ void computeScoreVector(double *score, double *newDiv, subSpmat *subSp, int maxI
 	int i, n, *colIndPtr, maxIndRank, *subRanksPtr;
 	double *scorePtr, cMax, *newDivPtr, ajm, bjm, djm, M;
 
-	M = subSp->M;
+	M = (double)subSp->M;
 	cMax = newDiv[maxImproveIndex];
 	maxIndRank = subSp->origRanks[subSp->g[maxImproveIndex]];
 	scorePtr = score;
