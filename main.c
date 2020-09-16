@@ -27,7 +27,7 @@ subSpmat* createSubsp(spmat *sp);
 
 
 int main(int argc, char* argv[]){
-	list *P, *O;
+	list *P, *O, *tmpList;
 	group *g, *g1, *g2;
 	spmat *sp;
 	FILE *inputFile, *outputFile;
@@ -64,7 +64,9 @@ int main(int argc, char* argv[]){
 
 	while(P != NULL){
 		g = P->g;
+		tmpList = P;
 		P = P->next;
+		free(tmpList);
 		divideG(sp, g, &g1, &g2, aVec, bVec, cVec, BVk, subSp);
 		if (g2 == NULL || g2->len == 0)
 		{
