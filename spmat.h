@@ -68,6 +68,7 @@ void freeSpmat(spmat *sp);
 /* Frees all resources in Ag submatrix */
 void freeSubSpmat(subSpmat *subsp);
 
+/* create subspmat that we will use later on in the program */
 subSpmat* createSubsp(spmat *sp);
 
 #endif

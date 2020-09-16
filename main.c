@@ -4,8 +4,6 @@
  *  Created on: 5 Aug 2020
  *      Author: Omer
  */
-
-
 #include <stdio.h>
 #include <stdlib.h>
 #include <assert.h>
@@ -23,12 +21,9 @@ int main(int argc, char* argv[])
 	group *g, *g1, *g2;
 	spmat *sp;
 	FILE *inputFile, *outputFile;
-	clock_t start, end;
 	double *aVec, *bVec, *cVec, *BVk;
 	subSpmat *subSp;
 
-	printf("In: main, start");
-	start = clock();
 	inputFile = fopen(argv[1], "r");
 	CHECK(inputFile != NULL, "open file error");
 
@@ -53,12 +48,11 @@ int main(int argc, char* argv[])
 		divideG(sp, g, &g1, &g2, aVec, bVec, cVec, BVk, subSp);
 		moveGroupsToLists(g1, g2, &P, &O);
 	}
+
 	outputFile = fopen(argv[2], "w");
 	exportData(outputFile, O);
 	fclose(outputFile);
 	freeAll(O, P, sp, subSp, aVec, bVec, cVec, BVk);
 	CHECK(argc == argc, "asserting argc is correct");
-	end = clock();
-	printf("\nIn: main, complete, took %f seconds\n", ((double)(end - start)/CLOCKS_PER_SEC));
 	return 0;
 }

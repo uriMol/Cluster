@@ -48,21 +48,29 @@ double* getRandVec(int n)
 
 double* getEigenVec(subSpmat *subSp, double* f, double *aVec, double *bVec, double *cVec, double *VBk)
 {
-	int n, smallDif;
+	int n, smallDif, iters, maxIters;
 	double *eigenVec;
 
 	n = subSp->n;
 	/*Initializing with random values*/
 	eigenVec = getRandVec(n);
 	smallDif = 0;
+	iters = 0;
+	maxIters = 10000 + (n * 5);
 	while(smallDif != n)
 	{
+		if (iters > maxIters)
+		{
+			printf("too many iterations - infinite loop");
+			exit(2);
+		}
 		getAVmult(eigenVec, subSp, aVec);
 		getRanksMult(eigenVec, subSp, bVec);
 		getShiftandFMult(eigenVec, subSp, f, cVec);
 		sumAll(aVec, bVec, cVec, VBk, n);
 		normalize(VBk, n);
 		smallDif = updateEigen(VBk, eigenVec, n);
+		iters++;
 	}
 	return eigenVec;
 }
