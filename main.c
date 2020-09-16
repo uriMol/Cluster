@@ -17,12 +17,6 @@
 #include <string.h>
 #include "mainUtils.h"
 
-void divideG(spmat *sp, group *g, group **g1, group **g2, double *aVec, double *bVec,
-		double *cVec, double *BVk, subSpmat *subSp);
-void exportData(FILE *outputFile, list *O);
-void createVectors(double **BVk, double **aVec, double **bVec, double **cVec, int n);
-subSpmat* createSubsp(spmat *sp);
-
 int main(int argc, char* argv[])
 {
 	list *P, *O, *tmpList;
@@ -95,86 +89,4 @@ int main(int argc, char* argv[])
 	end = clock();
 	printf("\nIn: main, complete, took %f seconds\n", ((double)(end - start)/CLOCKS_PER_SEC));
 	return 0;
-}
-
-void divideG(spmat *sp, group *g, group **g1, group **g2, double *aVec,
-		double *bVec, double *cVec, double *BVk, subSpmat *subSp)
-{
-	double *eigenVec, eigenVal, *division, Q, *f;
-
-	extractSubMatrix(sp, g, subSp);
-	f = getF(sp, g);
-	eigenVec = getEigenVec(subSp, f, aVec, bVec, cVec, BVk);
-	eigenVal = getEigenVal(eigenVec, subSp, f, aVec, bVec, cVec, BVk);
-	if (!IS_POSITIVE(eigenVal))
-	{
-		*g1 = g;
-		*g2 = NULL;
-		freeBeforeDivision(f, eigenVec);
-		return;
-	}
-	division = divByEigen(eigenVec, subSp->n);
-	division = modMaximization(subSp, division, g);
-	Q = getModularity(subSp, division, aVec, bVec, cVec, BVk, f);
-	if (!IS_POSITIVE(Q))
-	{
-		*g1 = g;
-		*g2 = NULL;
-		freeBeforeDivision(f, eigenVec);
-		free(division);
-		return;
-	}
-	divG1G2(division, subSp->n, g, g1, g2);
-	freeAfterDivision(f, division, eigenVec, g);
-}
-
-void exportData(FILE *outputFile, list *O)
-{
-	int numOfGroups, junk, tmpLen;
-	list *OPtr;
-
-	numOfGroups = countO(O);
-	OPtr = O;
-	junk = fwrite(&numOfGroups, sizeof(int), 1, outputFile);
-	CHECK(junk == 1, "writing numOfGroups");
-	while(OPtr != NULL)
-	{
-		tmpLen = OPtr->g->len;
-		junk = fwrite(&tmpLen, sizeof(int), 1, outputFile);
-		CHECK(junk == 1, "writing groupSize");
-		junk = fwrite(OPtr->g->indexes, sizeof(int), tmpLen, outputFile);
-		CHECK(junk == tmpLen, "writing indexes");
-		OPtr = OPtr->next;
-	}
-}
-
-void createVectors(double **BVk, double **aVec, double **bVec, double **cVec, int n)
-{
-	*(BVk) = (double*)malloc(n*sizeof(double));
-	CHECK(*BVk != NULL, "malloc BVk");
-	*(aVec) = (double*)malloc(n*sizeof(double));
-	CHECK(*aVec != NULL, "malloc aVec");
-	*(bVec) = (double*)malloc(n*sizeof(double));
-	CHECK(*bVec != NULL, "malloc bVec");
-	*(cVec) = (double*)calloc(n, sizeof(double));
-	CHECK(*cVec != NULL, "calloc cVec");
-}
-
-subSpmat* createSubsp(spmat *sp)
-{
-	int n;
-	subSpmat *subSp;
-	n = sp->n;
-	subSp = (subSpmat*) malloc(sizeof(subSpmat));
-	CHECK(subSp != NULL, "allocating subSp");
-	subSp->subRanks = (int*) malloc(sizeof(int) * n);
-	CHECK(subSp->subRanks != NULL, "allocating subSp->subRanks");
-	subSp->M = sp->M;
-	subSp->subValues = (int*) malloc(sizeof(int) * sp->M);
-	CHECK(subSp->subValues != NULL, "allocating subSp->subValues");
-	subSp->origRanks = sp->ranks;
-	subSp->subColind = (int*) malloc(sizeof(int) * sp->M);
-	CHECK(subSp->subColind != NULL, "allocating subSp->subColind");
-	subSp->shift = sp->shift;
-	return subSp;
 }

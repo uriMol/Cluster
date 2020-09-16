@@ -13,7 +13,8 @@
 /* declaring all future functions */
 void add_row(struct _spmat* , const int*, int, int);
 
-spmat* spmat_setting(FILE *inputFile){
+spmat* spmat_setting(FILE *inputFile)
+{
 	int k, i, tmpRank, vertices, ranks, *junk, *tmpRow;
 	spmat *sp;
 
@@ -42,7 +43,8 @@ spmat* spmat_setting(FILE *inputFile){
 	CHECK(k == 1, "Reading File");
 	tmpRow = (int*) malloc(vertices * sizeof(int));
 	CHECK(tmpRow != NULL, "Allocating");
-	for (i = 0; i < vertices; i++){
+	for (i = 0; i < vertices; i++)
+	{
 		k = fread(&tmpRank, sizeof(int) , 1, inputFile);
 		CHECK(k == 1, "Reading File");
 		k = fread(tmpRow, sizeof(int), tmpRank, inputFile);
@@ -69,7 +71,8 @@ void extractSubMatrix(spmat *sp, group *g, subSpmat *subSp)
 	subSp->n = len;
 
 	subM = 0;
-	for(i = 0; i < len; i++){
+	for(i = 0; i < len; i++)
+	{
 		/* calculate all Aij */
 		subTmpRnk = 0;
 		tmpRnk = sp->ranks[g->indexes[i]];
@@ -108,7 +111,8 @@ void extractSubMatrix(spmat *sp, group *g, subSpmat *subSp)
 	subSp->subM = subM;
 }
 
-void add_row(spmat *A, const int *row, int i, int rank){
+void add_row(spmat *A, const int *row, int i, int rank)
+{
 	/* declaring all variables */
 	int j, *colIndex, *valueIndex;
 	int const *index;
@@ -124,7 +128,8 @@ void add_row(spmat *A, const int *row, int i, int rank){
 	valueIndex = &(A->values[A ->rowptr[i]]);
 	colIndex = &(A -> colind[A ->rowptr[i]]);
 	/*inserting all edges*/
-	while (j < rank){
+	while (j < rank)
+	{
 		*valueIndex = 1;
 		valueIndex++;
 		*colIndex = *index;
@@ -138,16 +143,15 @@ void add_row(spmat *A, const int *row, int i, int rank){
 
 }
 
-spmat* spmat_allocate_array(int n, int nnz){
+spmat* spmat_allocate_array(int n, int nnz)
+{
 	spmat *sp;
-
 
 	sp = (spmat*) malloc(sizeof(spmat));
 	CHECK(sp != NULL, "Allocating");
 
 	sp->n = n;
 	sp->M = nnz;
-
 	/* now defining the private field - using array_helper to keep all non-zero values */
 	sp->values = (int*) malloc(nnz * sizeof(int));
 	CHECK(sp->values != NULL, "Allocating");
@@ -157,11 +161,11 @@ spmat* spmat_allocate_array(int n, int nnz){
 	CHECK(sp->rowptr != NULL, "Allocating");
 	sp->ranks = (int*) malloc(n * sizeof(int));
 	CHECK(sp->ranks != NULL, "Allocating");
-
 	return sp;
 }
 
-double getShift(spmat *sp){
+double getShift(spmat *sp)
+{
 	int i, j, rows, ranks, tmpRank, *rnkPtr, *colPtr, connected;
 	double tmp, max, result;
 
@@ -173,11 +177,14 @@ double getShift(spmat *sp){
 		tmp = 0;
 		rnkPtr = sp->ranks;
 		tmpRank = rnkPtr[i];
-		for(j = 0; j < rows; j++){
-			if (*colPtr == j){
+		for(j = 0; j < rows; j++)
+		{
+			if (*colPtr == j)
+			{
 				connected = 1;
 				colPtr++;
-			} else{
+			} else
+			{
 				connected = 0;
 			}
 			result = fabs(connected - ((tmpRank)*(*rnkPtr))/(double)ranks);
@@ -186,13 +193,30 @@ double getShift(spmat *sp){
 		}
 		if (tmp >= max) max = tmp;
 	}
-
 	return max;
 }
 
+subSpmat* createSubsp(spmat *sp)
+{
+	int n;
+	subSpmat *subSp;
+	n = sp->n;
+	subSp = (subSpmat*) malloc(sizeof(subSpmat));
+	CHECK(subSp != NULL, "allocating subSp");
+	subSp->subRanks = (int*) malloc(sizeof(int) * n);
+	CHECK(subSp->subRanks != NULL, "allocating subSp->subRanks");
+	subSp->M = sp->M;
+	subSp->subValues = (int*) malloc(sizeof(int) * sp->M);
+	CHECK(subSp->subValues != NULL, "allocating subSp->subValues");
+	subSp->origRanks = sp->ranks;
+	subSp->subColind = (int*) malloc(sizeof(int) * sp->M);
+	CHECK(subSp->subColind != NULL, "allocating subSp->subColind");
+	subSp->shift = sp->shift;
+	return subSp;
+}
 
-
-void freeSpmat(spmat *sp){
+void freeSpmat(spmat *sp)
+{
 	free(sp->colind);
 	free(sp->ranks);
 	free(sp->rowptr);
@@ -200,18 +224,10 @@ void freeSpmat(spmat *sp){
 	free(sp);
 }
 
-void freeSubSpmat(subSpmat *subsp){
+void freeSubSpmat(subSpmat *subsp)
+{
 	free(subsp->subColind);
 	free(subsp->subRanks);
 	free(subsp->subValues);
 	free(subsp);
-
 }
-
-
-
-
-
-
-
-
