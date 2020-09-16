@@ -10,6 +10,8 @@
 #define _SPMAT_H
 #define CHECKEQ(k, expected , msg) if (k != expected) printf("\nERROR - %s " , msg)
 #define CHECKNEQ(k, expected , msg) if (k == expected) printf("\nERROR - %s " , msg)
+#define CHECK(expr, msg) if(!(expr)) { printf("\nERROR: %s ", msg); exit(2); }
+
 
 
 typedef struct _spmat {

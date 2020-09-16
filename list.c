@@ -17,11 +17,14 @@ list* createP(int n){
 	group *g;
 	list *P;
 	P = (list*) malloc(sizeof(list));
-	CHECKNEQ(P, NULL, "allocating P");
+	/* CHECKNEQ(P, NULL, "allocating P"); */
+	CHECK(P != NULL, "allocating P");
 	g = (group*)malloc(sizeof(group));
-	CHECKNEQ(g, NULL, "allocating g in createP");
+	/* CHECKNEQ(g, NULL, "allocating g in createP"); */
+	CHECK(g != NULL, "allocating g in createP");
 	g->indexes = (int*) malloc(sizeof(int)*n);
-	CHECKNEQ(g->indexes, NULL, "allocating g->indexes in createP");
+	/* CHECKNEQ(g->indexes, NULL, "allocating g->indexes in createP"); */
+	CHECK(g->indexes != NULL, "allocating g->indexes in createP");
 	gPtr = g->indexes;
 	g->len = n;
 	for(i = 0; i < n; i++){

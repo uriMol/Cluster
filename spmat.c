@@ -39,7 +39,7 @@ spmat* spmat_setting(FILE *inputFile){
 	/*now we read the matrix into spmat */
 	rewind(inputFile);
 	k = fread(junk, sizeof(int) , 1, inputFile);
-	CHECKEQ(k, 1, "Reading File");
+	CHECKEQ(k,	 1, "Reading File");
 	tmpRow = (int*) malloc(vertices * sizeof(int));
 	CHECKNEQ(tmpRow, NULL, "Allocating");
 	for (i = 0; i < vertices; i++){
