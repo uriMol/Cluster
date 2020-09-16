@@ -29,4 +29,6 @@ void exportData(FILE *outputFile, list *O);
 
 void createVectors(double **BVk, double **aVec, double **bVec, double **cVec, int n);
 
+void moveGroupsToLists(group *g1,group *g2,list *P,list *O);
+
 #endif /* MAINUTILS_H_ */

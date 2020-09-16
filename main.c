@@ -51,35 +51,7 @@ int main(int argc, char* argv[])
 		P = P->next;
 		free(tmpList);
 		divideG(sp, g, &g1, &g2, aVec, bVec, cVec, BVk, subSp);
-		if (g2 == NULL || g2->len == 0)
-		{
-			O = listAdd(O, g1);
-			/*TODO free if len is 0*/
-		}
-		else if(g1 == NULL || g1->len == 0)
-		{
-			O = listAdd(O, g2);
-			/*TODO free if len is 0*/
-		}
-		else
-		{
-			if(g1->len == 1)
-			{
-				O = listAdd(O, g1);
-			}
-			else
-			{
-				P = listAdd(P, g1);
-			}
-			if(g2->len == 1)
-			{
-				O = listAdd(O, g2);
-			}
-			else
-			{
-				P = listAdd(P, g2);
-			}
-		}
+		moveGroupsToLists(g1, g2, P, O);
 	}
 	outputFile = fopen(argv[2], "w");
 	exportData(outputFile, O);
