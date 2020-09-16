@@ -102,33 +102,33 @@ void createVectors(double **BVk, double **aVec, double **bVec, double **cVec, in
 	CHECK(*cVec != NULL, "calloc cVec");
 }
 
-void moveGroupsToLists(group *g1,group *g2,list *P,list *O)
+void moveGroupsToLists(group *g1,group *g2,list **P,list **O)
 {
 	if (g2 == NULL || g2->len == 0)
 	{
-		O = listAdd(O, g1);
+		*O = listAdd(*O, g1);
 	}
 	else if(g1 == NULL || g1->len == 0)
 	{
-		O = listAdd(O, g2);
+		*O = listAdd(*O, g2);
 	}
 	else
 	{
 		if(g1->len == 1)
 		{
-			O = listAdd(O, g1);
+			*O = listAdd(*O, g1);
 		}
 		else
 		{
-			P = listAdd(P, g1);
+			*P = listAdd(*P, g1);
 		}
 		if(g2->len == 1)
 		{
-			O = listAdd(O, g2);
+			*O = listAdd(*O, g2);
 		}
 		else
 		{
-			P = listAdd(P, g2);
+			*P = listAdd(*P, g2);
 		}
 	}
 }
