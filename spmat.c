@@ -49,10 +49,9 @@ spmat* spmat_setting(FILE *inputFile){
 		CHECK(k == tmpRank, "Reading File");
 		add_row(sp, tmpRow, i, tmpRank);
 	}
+	sp->shift = getShift(sp);
 	free(tmpRow);
 	free(junk);
-	sp->shift = getShift(sp);
-
 
 	return sp;
 }
