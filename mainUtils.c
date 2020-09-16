@@ -40,7 +40,12 @@ void printOutput(FILE *outputFile)
 }
 
 
-void 	freeAll(list *O, list* P, spmat *sp, subSpmat *subSp){
+void 	freeAll(list *O, list* P, spmat *sp, subSpmat *subSp,
+		double *aVec, double *bVec, double *cVec, double *BVk){
+	free(aVec);
+	free(bVec);
+	free(cVec);
+	free(BVk);
 	freeList(O);
 	freeList(P);
 	freeSpmat(sp);

@@ -102,7 +102,7 @@ int main(int argc, char* argv[]){
 	exportData(outputFile, O);
 	fclose(outputFile);
 
-	freeAll(O, P, sp, subSp);
+	freeAll(O, P, sp, subSp, aVec, bVec, cVec, BVk);
 	CHECKEQ (argc, argc, "argc");
 	end = clock();
 	printf("\nIn: main, complete, took %f seconds", ((double)(end - start)/CLOCKS_PER_SEC));
