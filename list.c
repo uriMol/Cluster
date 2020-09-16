@@ -12,19 +12,23 @@
 #include "list.h"
 #include "spmat.h"
 
-list* createP(int n){
+list* createP(int n)
+{
 	int i, *gPtr;
 	group *g;
 	list *P;
+
 	P = (list*) malloc(sizeof(list));
 	CHECK(P != NULL, "allocating P");
 	g = (group*)malloc(sizeof(group));
 	CHECK(g != NULL, "allocating g in createP");
 	g->indexes = (int*) malloc(sizeof(int)*n);
 	CHECK(g->indexes != NULL, "allocating g->indexes in createP");
+
 	gPtr = g->indexes;
 	g->len = n;
-	for(i = 0; i < n; i++){
+	for(i = 0; i < n; i++)
+	{
 		*gPtr = i;
 		gPtr++;
 	}
@@ -33,24 +37,27 @@ list* createP(int n){
 	return P;
 }
 
-list* createO(){
+list* createO()
+{
 	list *O = NULL;
 	return O;
 }
 
 
-list* listAdd(list *L, group *g){
+list* listAdd(list *L, group *g)
+{
 	list *newL;
+
 	if (g->len == 0)
 	{
 		printf(".");
 	}
 	newL = (list*)malloc(sizeof(list));
 	CHECK(newL != NULL, "allocating newL in listAdd");
+
 	newL->g = g;
 	newL->next = L;
 	return newL;
-
 }
 
 int countO(list *O)
@@ -60,7 +67,6 @@ int countO(list *O)
 
 	tmp = O;
 	cnt = 0;
-
 	while (tmp != NULL && tmp->g != NULL)
 	{
 		cnt++;
@@ -69,23 +75,12 @@ int countO(list *O)
 	return cnt;
 }
 
-
-void printO(list* O){
-	int i;
-	list *tmp;
-	tmp = O;
-	while (tmp->g != NULL){
-		printf("\n");
-		for(i = 0; i < tmp->g->len; i++){
-			printf("%d, ", tmp->g->indexes[i]);
-		}
-		tmp = tmp->next;
-	}
-}
-
-void freeList(list *L){
+void freeList(list *L)
+{
 	list *lPtr;
-	while(L != NULL && L->g != NULL){
+
+	while(L != NULL && L->g != NULL)
+	{
 		lPtr = L;
 		L = L->next;
 		free(lPtr->g->indexes);
@@ -94,5 +89,4 @@ void freeList(list *L){
 	}
 	if(L != NULL) free(L);
 }
-
 

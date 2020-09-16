@@ -9,28 +9,27 @@
 #ifndef LIST_
 #define LIST_
 
-/*
- * A struct to contain P - the list of groups
- */
-typedef struct list{
-
+/* A struct to contain the list of groups we are dividing */
+typedef struct list
+{
+	/* g - keeps the group of vertices we are dividing */
 	group *g;
-
+	/* next - pointer to next list elelment */
 	struct list* next;
-
-
-
 } list;
 
+/* Creates the list P with one group that contains all the vertices at first */
 list* createP(int n);
+
+/* Creates the list O and initializing it to be an empty list */
 list* createO();
+
+/* adding to list L the group g */
 list* listAdd(list *L, group *g);
-void printO(list* O);
+
+/* counting how many groups we have in O == how many groups we divided the graph */
 int countO(list *O);
+
+/* frees all the resources in list L */
 void freeList(list *L);
-
-
-
-
-
 #endif /* LIST_ */

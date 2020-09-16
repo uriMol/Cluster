@@ -14,15 +14,14 @@
 void reinitializeUnmoved(group *unmoved, int len);
 void freeAfterModMax(group *unmoved, double *score, int *indices, double *improve, double *division);
 
-
-double* modMaximization(subSpmat *subSp, double *division, group *g){
+double* modMaximization(subSpmat *subSp, double *division, group *g)
+{
 	int i, n, *indices, maxImproveIndex, prevImproveIndex;
 	group *unmoved;
 	double deltaQ, *newDivision, *score, *improve;
 
 	n = g->len;
 	modInitialize(&unmoved, n, division, &newDivision, &score, &indices, &improve);
-
 	do {
 		reinitializeUnmoved(unmoved, n);
 		for (i = 0; i < n; i++)
@@ -58,7 +57,6 @@ void modInitialize(group **unmoved, int len, double *divOrig, double **divNew, d
 	int i;
 	double *newDivPtr, *divPtr;
 
-
 	*unmoved = (group*) malloc(sizeof(group));
 	CHECK(*unmoved != NULL, "allocating unmoved");
 	(*unmoved)->len = len;
@@ -81,7 +79,6 @@ void modInitialize(group **unmoved, int len, double *divOrig, double **divNew, d
 		newDivPtr++;
 		divPtr++;
 	}
-
 }
 
 void reinitializeUnmoved(group *unmoved, int len)
@@ -105,7 +102,6 @@ void computeScoreVector2(double *score, subSpmat *subSp, double* newDiv)
 	M = (double) subSp->M;
 	n = subSp->n;
 	scorePtr = score;
-
 	subColIndPtr = subSp->subColind;
 	di = newDiv;
 	gPtr = subSp->g;
@@ -140,10 +136,7 @@ void computeScoreVector2(double *score, subSpmat *subSp, double* newDiv)
 		di++;
 		gPtr++;
 	}
-
 }
-
-
 
 void computeScoreVector(double *score, double *newDiv, subSpmat *subSp, int maxImproveIndex)
 {
@@ -158,7 +151,8 @@ void computeScoreVector(double *score, double *newDiv, subSpmat *subSp, int maxI
 	colIndPtr = subSp->subColind;
 	subRanksPtr = subSp->subRanks;
 	newDivPtr = newDiv;
-	for(i = 0; i < maxImproveIndex; i++){
+	for(i = 0; i < maxImproveIndex; i++)
+	{
 		colIndPtr += *subRanksPtr;
 		subRanksPtr++;
 	}
@@ -166,7 +160,6 @@ void computeScoreVector(double *score, double *newDiv, subSpmat *subSp, int maxI
 	{
 		*newDivPtr *= -1;
 		ajm = 0;
-
 		if(*colIndPtr == i)
 		{
 			ajm = 1;
@@ -201,7 +194,6 @@ int moveMaxVertex(double *score, group *unmoved, double *newDiv, int *indices, d
 	}
 	newDiv[unmoved->indexes[maxIndex]] *= -1;
 	indices[i] = unmoved->indexes[maxIndex];
-
 	if( i == 0)
 	{
 		improve[i] = max;
@@ -220,7 +212,6 @@ int findMaxImprove(double *improve, int n)
 	double *improvePtr, max;
 	int i, maxIndex;
 
-
 	improvePtr = improve;
 	max = *improvePtr;
 	maxIndex = 0;
@@ -233,8 +224,6 @@ int findMaxImprove(double *improve, int n)
 		}
 		improvePtr++;
 	}
-
-
 	return maxIndex;
 }
 

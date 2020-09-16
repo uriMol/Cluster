@@ -15,18 +15,16 @@
 #include "spmatUtils.h"
 #include "list.h"
 #include <string.h>
-#include "SPBufferset.h"
 #include "mainUtils.h"
 
-void 	divideG(spmat *sp, group *g, group **g1, group **g2, double *aVec, double *bVec,
+void divideG(spmat *sp, group *g, group **g1, group **g2, double *aVec, double *bVec,
 		double *cVec, double *BVk, subSpmat *subSp);
-void 	exportData(FILE *outputFile, list *O);
-void 	createVectors(double **BVk, double **aVec, double **bVec, double **cVec, int n);
+void exportData(FILE *outputFile, list *O);
+void createVectors(double **BVk, double **aVec, double **bVec, double **cVec, int n);
 subSpmat* createSubsp(spmat *sp);
 
-
-
-int main(int argc, char* argv[]){
+int main(int argc, char* argv[])
+{
 	list *P, *O, *tmpList;
 	group *g, *g1, *g2;
 	spmat *sp;
@@ -35,28 +33,25 @@ int main(int argc, char* argv[]){
 	double *aVec, *bVec, *cVec, *BVk;
 	subSpmat *subSp;
 
-
-	/*SP_BUFF_SET();*/
 	printf("In: main, start");
 	start = clock();
 	inputFile = fopen(argv[1], "r");
 	CHECK(inputFile != NULL, "open file error");
+
 	/* allocating the array, setting it up with all values */
 	sp = spmat_setting(inputFile);
-
 	fclose(inputFile);
-
-	/*	if(sp->M == 0){		printf("\nIn:main, checking sp->M == 0 getEigenVec");		return -1;		TODO special case	}	*/
 	CHECK(sp->M != 0, "invalid graph, it has no edges --> dividing by 0");
-	/* allocating P and O */
+
+	/* allocating P and O and creating some vectors and structures what will be in use later in the program*/
 	P = createP(sp->n);
 	O = createO();
 	createVectors(&BVk, &aVec, &bVec, &cVec, sp->n);
 	subSp = createSubsp(sp);
 
 	/* Starting the division while loop */
-
-	while(P != NULL){
+	while(P != NULL)
+	{
 		g = P->g;
 		tmpList = P;
 		P = P->next;
@@ -95,7 +90,6 @@ int main(int argc, char* argv[]){
 	outputFile = fopen(argv[2], "w");
 	exportData(outputFile, O);
 	fclose(outputFile);
-
 	freeAll(O, P, sp, subSp, aVec, bVec, cVec, BVk);
 	CHECK(argc == argc, "asserting argc is correct");
 	end = clock();
@@ -104,32 +98,32 @@ int main(int argc, char* argv[]){
 }
 
 void divideG(spmat *sp, group *g, group **g1, group **g2, double *aVec,
-		double *bVec, double *cVec, double *BVk, subSpmat *subSp){
+		double *bVec, double *cVec, double *BVk, subSpmat *subSp)
+{
 	double *eigenVec, eigenVal, *division, Q, *f;
 
 	extractSubMatrix(sp, g, subSp);
 	f = getF(sp, g);
 	eigenVec = getEigenVec(subSp, f, aVec, bVec, cVec, BVk);
 	eigenVal = getEigenVal(eigenVec, subSp, f, aVec, bVec, cVec, BVk);
-
-	if (!IS_POSITIVE(eigenVal)){
+	if (!IS_POSITIVE(eigenVal))
+	{
 		*g1 = g;
 		*g2 = NULL;
 		freeBeforeDivision(f, eigenVec);
 		return;
 	}
-
 	division = divByEigen(eigenVec, subSp->n);
 	division = modMaximization(subSp, division, g);
 	Q = getModularity(subSp, division, aVec, bVec, cVec, BVk, f);
-	if (!IS_POSITIVE(Q)){
+	if (!IS_POSITIVE(Q))
+	{
 		*g1 = g;
 		*g2 = NULL;
 		freeBeforeDivision(f, eigenVec);
 		free(division);
 		return;
 	}
-
 	divG1G2(division, subSp->n, g, g1, g2);
 	freeAfterDivision(f, division, eigenVec, g);
 }
@@ -154,8 +148,8 @@ void exportData(FILE *outputFile, list *O)
 	}
 }
 
-
-void createVectors(double **BVk, double **aVec, double **bVec, double **cVec, int n){
+void createVectors(double **BVk, double **aVec, double **bVec, double **cVec, int n)
+{
 	*(BVk) = (double*)malloc(n*sizeof(double));
 	CHECK(*BVk != NULL, "malloc BVk");
 	*(aVec) = (double*)malloc(n*sizeof(double));
@@ -166,7 +160,8 @@ void createVectors(double **BVk, double **aVec, double **bVec, double **cVec, in
 	CHECK(*cVec != NULL, "calloc cVec");
 }
 
-subSpmat* createSubsp(spmat *sp){
+subSpmat* createSubsp(spmat *sp)
+{
 	int n;
 	subSpmat *subSp;
 	n = sp->n;
@@ -183,4 +178,3 @@ subSpmat* createSubsp(spmat *sp){
 	subSp->shift = sp->shift;
 	return subSp;
 }
-
