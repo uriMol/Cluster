@@ -4,8 +4,10 @@
  *  Created on: 27 Aug 2020
  *      Author: Omer
  */
+
 #ifndef GROUP_H_
 #define GROUP_H_
+/* This module is describing the group structue that holds vector of indices and its length */
 typedef struct _group
 {
 	/*indexes - indices of the relevent vertices in the group*/

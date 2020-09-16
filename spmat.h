@@ -10,6 +10,8 @@
 #define _SPMAT_H
 #define CHECK(expr, msg) if(!(expr)) { printf("\nERROR: %s\n ", msg); exit(2); }
 
+/* This is the header that describes the spmat and subspmat structures and settings */
+
 typedef struct _spmat
 {
 	/* values - keeping the non-zero values of the matrix */

@@ -9,6 +9,8 @@
 #ifndef LIST_
 #define LIST_
 
+/* This is the header of the list structure and all list methods */
+
 /* A struct to contain the list of groups we are dividing */
 typedef struct list
 {

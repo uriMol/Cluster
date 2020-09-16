@@ -9,6 +9,8 @@
 #ifndef MODULARITYMAX_H_
 #define MODULARITYMAX_H_
 
+/* This header includes all relevant methods related to the modularity maximization algorithm */
+
 /* initializing all relevent structures to perform the modularity maximization algorithm */
 void modInitialize(group **unmoved, int len, double *divOrig, double **divNew, double **score, int **indices, double **improve);
 

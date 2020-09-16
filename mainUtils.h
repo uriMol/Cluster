@@ -12,6 +12,8 @@
 #ifndef MAINUTILS_H_
 #define MAINUTILS_H_
 
+/*  This header includes all the functions that assist the main work flow, such as freeing resources or intializing structures */
+
 /* free all given arguments */
 void freeAll(list *O, list* P, spmat *sp, subSpmat *subSp,
 		double *aVec, double *bVec, double *cVec, double *BVk);

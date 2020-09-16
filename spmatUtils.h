@@ -10,6 +10,8 @@
 #ifndef SPMATUTILS_H_
 #define SPMATUTILS_H_
 #define IS_POSITIVE(X) ((X) > 0.00001)
+/* This header includes utils of matrices and submatrices that alows us to fetch relevant informatio and calculations */
+
 /* returning the eigen vector of subSp */
 double* getEigenVec(subSpmat *subSp, double *f, double *aVec, double *bVec, double *cVec, double *BVk);
 /* dividing group g into 2 groups - g1 and g2 according to the division vector */
