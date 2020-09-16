@@ -60,18 +60,18 @@ void modInitialize(group **unmoved, int len, double *divOrig, double **divNew, d
 
 
 	*unmoved = (group*) malloc(sizeof(group));
-	CHECKNEQ(*unmoved, NULL, "allocating unmoved");
+	CHECK(*unmoved != NULL, "allocating unmoved");
 	(*unmoved)->len = len;
 	(*unmoved)->indexes = (int*) malloc(sizeof(int) * len);
-	CHECKNEQ((*unmoved)->indexes, NULL, "allocating unmoved->indexes");
+	CHECK((*unmoved)->indexes != NULL, "allocating unmoved->indexes");
 	(*divNew) = (double*) malloc(sizeof(double) * len);
-	CHECKNEQ(*divNew, NULL, "allocating divNew");
+	CHECK(*divNew != NULL, "allocating divNew");
 	(*score) = (double*) malloc(sizeof(double) * len);
-	CHECKNEQ(*score, NULL, "allocating score");
+	CHECK(*score != NULL, "allocating score");
 	(*indices) = (int*) malloc(sizeof(int) * len);
-	CHECKNEQ(*indices, NULL, "allocating indices");
+	CHECK(*indices != NULL, "allocating indices");
 	(*improve) = (double*) malloc(sizeof(double) * len);
-	CHECKNEQ(*improve, NULL, "allocating improve");
+	CHECK(*improve != NULL, "allocating improve");
 
 	newDivPtr = *divNew;
 	divPtr = divOrig;

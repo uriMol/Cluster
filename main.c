@@ -39,21 +39,15 @@ int main(int argc, char* argv[]){
 	/*SP_BUFF_SET();*/
 	printf("In: main, start");
 	start = clock();
-
-
 	inputFile = fopen(argv[1], "r");
-	CHECKNEQ(inputFile, NULL, "open file error");
-
+	CHECK(inputFile != NULL, "open file error");
 	/* allocating the array, setting it up with all values */
 	sp = spmat_setting(inputFile);
 
 	fclose(inputFile);
 
-	if(sp->M == 0){
-		printf("\nIn:main, checking sp->M == 0 getEigenVec");
-		return -1;
-		/*TODO special case*/
-	}
+	/*	if(sp->M == 0){		printf("\nIn:main, checking sp->M == 0 getEigenVec");		return -1;		TODO special case	}	*/
+	CHECK(sp->M != 0, "invalid graph, it has no edges --> dividing by 0");
 	/* allocating P and O */
 	P = createP(sp->n);
 	O = createO();
@@ -103,7 +97,7 @@ int main(int argc, char* argv[]){
 	fclose(outputFile);
 
 	freeAll(O, P, sp, subSp, aVec, bVec, cVec, BVk);
-	CHECKEQ (argc, argc, "argc");
+	CHECK(argc == argc, "asserting argc is correct");
 	end = clock();
 	printf("\nIn: main, complete, took %f seconds\n", ((double)(end - start)/CLOCKS_PER_SEC));
 	return 0;
@@ -126,7 +120,6 @@ void divideG(spmat *sp, group *g, group **g1, group **g2, double *aVec,
 	}
 
 	division = divByEigen(eigenVec, subSp->n);
-
 	division = modMaximization(subSp, division, g);
 	Q = getModularity(subSp, division, aVec, bVec, cVec, BVk, f);
 	if (!IS_POSITIVE(Q)){
@@ -149,14 +142,14 @@ void exportData(FILE *outputFile, list *O)
 	numOfGroups = countO(O);
 	OPtr = O;
 	junk = fwrite(&numOfGroups, sizeof(int), 1, outputFile);
-	CHECKEQ(junk, 1, "writing numOfGroups");
+	CHECK(junk == 1, "writing numOfGroups");
 	while(OPtr != NULL)
 	{
 		tmpLen = OPtr->g->len;
 		junk = fwrite(&tmpLen, sizeof(int), 1, outputFile);
-		CHECKEQ(junk, 1, "writing groupSize");
+		CHECK(junk == 1, "writing groupSize");
 		junk = fwrite(OPtr->g->indexes, sizeof(int), tmpLen, outputFile);
-		CHECKEQ(junk, tmpLen, "writing indexes");
+		CHECK(junk == tmpLen, "writing indexes");
 		OPtr = OPtr->next;
 	}
 }
@@ -164,13 +157,13 @@ void exportData(FILE *outputFile, list *O)
 
 void createVectors(double **BVk, double **aVec, double **bVec, double **cVec, int n){
 	*(BVk) = (double*)malloc(n*sizeof(double));
-	CHECKNEQ(*BVk, NULL, "malloc BVk");
+	CHECK(*BVk != NULL, "malloc BVk");
 	*(aVec) = (double*)malloc(n*sizeof(double));
-	CHECKNEQ(*aVec, NULL, "malloc aVec");
+	CHECK(*aVec != NULL, "malloc aVec");
 	*(bVec) = (double*)malloc(n*sizeof(double));
-	CHECKNEQ(*bVec, NULL, "malloc bVec");
+	CHECK(*bVec != NULL, "malloc bVec");
 	*(cVec) = (double*)calloc(n, sizeof(double));
-	CHECKNEQ(*cVec, NULL, "calloc cVec");
+	CHECK(*cVec != NULL, "calloc cVec");
 }
 
 subSpmat* createSubsp(spmat *sp){
@@ -178,15 +171,15 @@ subSpmat* createSubsp(spmat *sp){
 	subSpmat *subSp;
 	n = sp->n;
 	subSp = (subSpmat*) malloc(sizeof(subSpmat));
-	CHECKNEQ(subSp, NULL, "allocating subSp");
+	CHECK(subSp != NULL, "allocating subSp");
 	subSp->subRanks = (int*) malloc(sizeof(int) * n);
-	CHECKNEQ(subSp->subRanks, NULL, "allocating subSp->subRanks");
+	CHECK(subSp->subRanks != NULL, "allocating subSp->subRanks");
 	subSp->M = sp->M;
 	subSp->subValues = (int*) malloc(sizeof(int) * sp->M);
-	CHECKNEQ(subSp->subValues, NULL, "allocating subSp->subValues");
+	CHECK(subSp->subValues != NULL, "allocating subSp->subValues");
 	subSp->origRanks = sp->ranks;
 	subSp->subColind = (int*) malloc(sizeof(int) * sp->M);
-	CHECKNEQ(subSp->subColind, NULL, "allocating subSp->subColind");
+	CHECK(subSp->subColind != NULL, "allocating subSp->subColind");
 	subSp->shift = sp->shift;
 	return subSp;
 }
