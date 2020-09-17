@@ -97,14 +97,17 @@ void reinitializeUnmoved(group *unmoved, int len)
 void computeScoreVector2(double *score, subSpmat *subSp, double* newDiv)
 {
 	double *scorePtr, scoreVal, *di, *dj, tmpVal, M;
-	int i, j, n, *subColIndPtr, Ki, Kj, *gPtr, *tmpGPtr, Aij;
+	int i, j, n, *subColIndPtr, Ki, Kj, *gPtr, *tmpGPtr, Aij, subColIndCnter, smallM;
 
+	subColIndCnter = 0;
+	smallM = subSp->subM;
 	M = (double) subSp->M;
 	n = subSp->n;
 	scorePtr = score;
 	subColIndPtr = subSp->subColind;
 	di = newDiv;
 	gPtr = subSp->g;
+
 	for(i = 0; i < n; i++)
 	{
 		Ki = subSp->origRanks[*gPtr];
@@ -117,10 +120,11 @@ void computeScoreVector2(double *score, subSpmat *subSp, double* newDiv)
 			Kj = subSp->origRanks[*tmpGPtr];
 			tmpVal = 0;
 			Aij = 0;
-			if(*subColIndPtr == j)
+			if(subColIndCnter < smallM && *subColIndPtr == j)
 			{
 				Aij = 1;
 				subColIndPtr++;
+				subColIndCnter++;
 			}
 			tmpVal = Aij - ((Ki * Kj) / M);
 			tmpVal *= (*dj);
@@ -140,9 +144,11 @@ void computeScoreVector2(double *score, subSpmat *subSp, double* newDiv)
 
 void computeScoreVector(double *score, double *newDiv, subSpmat *subSp, int maxImproveIndex)
 {
-	int i, n, *colIndPtr, maxIndRank, *subRanksPtr;
+	int i, n, *colIndPtr, maxIndRank, *subRanksPtr, subColIndCnter, smallM;
 	double *scorePtr, cMax, *newDivPtr, ajm, bjm, djm, M;
 
+	smallM = subSp->subM;
+	subColIndCnter = 0;
 	M = (double)subSp->M;
 	cMax = newDiv[maxImproveIndex];
 	maxIndRank = subSp->origRanks[subSp->g[maxImproveIndex]];
@@ -160,10 +166,11 @@ void computeScoreVector(double *score, double *newDiv, subSpmat *subSp, int maxI
 	{
 		*newDivPtr *= -1;
 		ajm = 0;
-		if(*colIndPtr == i)
+		if(subColIndCnter < smallM && *colIndPtr == i)
 		{
 			ajm = 1;
 			colIndPtr++;
+			subColIndCnter++;
 		}
 		djm = maxIndRank * (subSp->origRanks[subSp->g[i]]) / M;
 		bjm = ajm - djm;
