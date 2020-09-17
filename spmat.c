@@ -166,23 +166,25 @@ spmat* spmat_allocate_array(int n, int nnz)
 
 double getShift(spmat *sp)
 {
-	int i, j, rows, ranks, tmpRank, *rnkPtr, *colPtr, connected;
+	int i, j, rows, ranks, tmpRank, *rnkPtr, *colPtr, connected, colPtrCnter;
 	double tmp, max, result;
 
 	rows = sp->n;
 	ranks = sp->M;
 	colPtr = sp->colind;
 	max = 0;
+	colPtrCnter = 0;
 	for(i = 0; i < rows; i++){
 		tmp = 0;
 		rnkPtr = sp->ranks;
 		tmpRank = rnkPtr[i];
 		for(j = 0; j < rows; j++)
 		{
-			if (*colPtr == j)
+			if (colPtrCnter < ranks && *colPtr == j)
 			{
 				connected = 1;
 				colPtr++;
+				colPtrCnter++;
 			} else
 			{
 				connected = 0;
