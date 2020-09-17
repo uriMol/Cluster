@@ -24,7 +24,7 @@ int main(int argc, char* argv[])
 	double *aVec, *bVec, *cVec, *BVk;
 	subSpmat *subSp;
 
-	inputFile = fopen(argv[1], "r");
+	inputFile = fopen(argv[1], "rb");
 	CHECK(inputFile != NULL, "open file error");
 
 	/* allocating the array, setting it up with all values */
@@ -49,7 +49,7 @@ int main(int argc, char* argv[])
 		moveGroupsToLists(g1, g2, &P, &O);
 	}
 
-	outputFile = fopen(argv[2], "w");
+	outputFile = fopen(argv[2], "wb");
 	exportData(outputFile, O);
 	fclose(outputFile);
 	freeAll(O, P, sp, subSp, aVec, bVec, cVec, BVk);
