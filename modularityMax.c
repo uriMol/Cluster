@@ -160,7 +160,9 @@ void computeScoreVector(double *score, double *newDiv, subSpmat *subSp, int maxI
 	for(i = 0; i < maxImproveIndex; i++)
 	{
 		colIndPtr += *subRanksPtr;
+		subColIndCnter += *subRanksPtr;
 		subRanksPtr++;
+		
 	}
 	for(i = 0; i < n; i++)
 	{
