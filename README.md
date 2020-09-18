@@ -6,4 +6,4 @@ In this project, we implemented an algorithm for detecting community structures 
 
 # About our work
 Developing this algorithm took us about 2 months. During this time we learned how to use git, so you can probably see that the commits might be wierd some times..  We kept a google doc to document all of our progress and kept it up to date every day we worked, keeping tracks of changes, tasks, tests and input files.
-Building this kind of algorithm doesn't have to take that long, it's the running time improvements that we implemented that took us the time.
+Most of the work on this program was dedicated to implementing runtime improvements and making this algorithm run as efficient as possible.
