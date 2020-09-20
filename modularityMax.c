@@ -147,7 +147,7 @@ void computeScoreVector2(double *score, subSpmat *subSp, double* newDiv)
 
 void computeScoreVector(double *score, double *newDiv, subSpmat *subSp, int maxImproveIndex)
 {
-	int i, n, *colIndPtr, maxIndRank, *subRanksPtr, subColIndCnter, smallM;
+	int i, n, *colIndPtr, maxIndRank, *subRanksPtr, subColIndCnter, smallM, tmpRank;
 	double *scorePtr, cMax, *newDivPtr, ajm, bjm, djm, M;
 
 	smallM = subSp->subM;
@@ -167,15 +167,17 @@ void computeScoreVector(double *score, double *newDiv, subSpmat *subSp, int maxI
 		subRanksPtr++;
 		
 	}
+	tmpRank = *subRanksPtr;
 	for(i = 0; i < n; i++)
 	{
 		*newDivPtr *= -1;
 		ajm = 0;
-		if(subColIndCnter < smallM && *colIndPtr == i)
+		if(tmpRank > 0 && subColIndCnter < smallM && *colIndPtr == i)
 		{
 			ajm = 1;
 			colIndPtr++;
 			subColIndCnter++;
+			tmpRank--;
 		}
 		djm = maxIndRank * (subSp->origRanks[subSp->g[i]]) / M;
 		bjm = ajm - djm;
