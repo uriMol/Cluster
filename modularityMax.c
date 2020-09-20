@@ -16,17 +16,17 @@ void freeAfterModMax(group *unmoved, double *score, int *indices, double *improv
 
 double* modMaximization(subSpmat *subSp, double *division, group *g)
 {
-	int i, n, *indices, maxImproveIndex, prevImproveIndex;
+	int i, n, *indices, maxImproveIndex, prevImproveIndex, iterCnter;
 	group *unmoved;
 	double deltaQ, *newDivision, *score, *improve;
 
 	n = g->len;
 	modInitialize(&unmoved, n, division, &newDivision, &score, &indices, &improve);
+	iterCnter = 0;
 	do {
 		reinitializeUnmoved(unmoved, n);
 		for (i = 0; i < n; i++)
 		{
-
 			if(i != 0)
 			{
 				computeScoreVector(score, newDivision, subSp, prevImproveIndex);
@@ -47,7 +47,8 @@ double* modMaximization(subSpmat *subSp, double *division, group *g)
 		{
 			deltaQ = improve[maxImproveIndex];
 		}
-	} while (IS_POSITIVE(deltaQ));
+		iterCnter++;
+	} while (iterCnter < 2*n + 1 && IS_POSITIVE(deltaQ));
 	freeAfterModMax(unmoved, score, indices, improve, division);
 	return newDivision;
 }
@@ -96,8 +97,8 @@ void reinitializeUnmoved(group *unmoved, int len)
 
 void computeScoreVector2(double *score, subSpmat *subSp, double* newDiv)
 {
+	int i, j, n, *subColIndPtr, Ki, Kj, *gPtr, *tmpGPtr, Aij, subColIndCnter, smallM, tmpRank;
 	double *scorePtr, scoreVal, *di, *dj, tmpVal, M;
-	int i, j, n, *subColIndPtr, Ki, Kj, *gPtr, *tmpGPtr, Aij, subColIndCnter, smallM;
 
 	subColIndCnter = 0;
 	smallM = subSp->subM;
@@ -115,16 +116,18 @@ void computeScoreVector2(double *score, subSpmat *subSp, double* newDiv)
 		scoreVal = 0;
 		dj = newDiv;
 		tmpGPtr = subSp->g;
+		tmpRank = subSp->subRanks[i];
 		for(j = 0; j < n; j++)
 		{
 			Kj = subSp->origRanks[*tmpGPtr];
 			tmpVal = 0;
 			Aij = 0;
-			if(subColIndCnter < smallM && *subColIndPtr == j)
+			if(tmpRank > 0 && subColIndCnter < smallM && *subColIndPtr == j)
 			{
 				Aij = 1;
 				subColIndPtr++;
 				subColIndCnter++;
+				tmpRank--;
 			}
 			tmpVal = Aij - ((Ki * Kj) / M);
 			tmpVal *= (*dj);
